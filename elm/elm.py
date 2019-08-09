@@ -134,7 +134,7 @@ class ELM:
                 time.sleep(0.1)
                 continue
 
-                # get the latest command
+            # get the latest command
             self.cmd = self.read()
             if self.threadState == THREAD.STOPPED:
                 return
