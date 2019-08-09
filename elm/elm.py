@@ -43,7 +43,6 @@ class ELM:
     ELM_DEFAULTS           = r"ATD$"
     ELM_SET_PROTO          = r"ATSPA?[0-9A-C]$"
     ELM_ERASE_PROTO        = r"ATSP00$"
-    ELM_R_OK               = ELM_R_OK
 
     def Sequence(self, pid, base, max, factor, n_bytes):
         c = self.counters[pid]

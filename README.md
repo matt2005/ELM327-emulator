@@ -75,7 +75,6 @@ When running on Windows, the following message is shown:
 ELM327-emulator is running on com0com serial port pair reading from COM3
 ```
 
-
 ## Embedded dictionary of AT Commands and PIDs
 
 A [dictionary](https://docs.python.org/3.7/tutorial/datastructures.html#dictionaries) named *ObdMessage* is used to define commands and PIDs. The dictionary includes more sections (named scenarios):

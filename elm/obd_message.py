@@ -439,7 +439,7 @@ ObdMessage = {
     'car': {
     # AT Commands
         'ELM_DP': {
-            'Request': '^AT DP' + ELM_MAX_RESP,
+            'Request': '^ATDP' + ELM_MAX_RESP,
             'Descr': 'Current protocol',
             'Header': ECU_ADDR_E,
             'Response': [
@@ -448,7 +448,7 @@ ObdMessage = {
                         ]
         },
         'ELM_IGNITION': {
-            'Request': '^AT IGN' + ELM_MAX_RESP,
+            'Request': '^ATIGN' + ELM_MAX_RESP,
             'Descr': 'IgnMon input level',
             'Header': ECU_ADDR_E,
             'Response': [
@@ -475,7 +475,7 @@ ObdMessage = {
             'Request': '^ATI' + ELM_MAX_RESP,
             'Descr': 'ELM327 version string',
             'Header': ECU_ADDR_E,
-            'Response': 'ELM327 v1.5a \r'
+            'Response': 'ELM327 v1.5 \r'
         },
         'ELM_VOLTAGE': {
             'Request': '^ATRV' + ELM_MAX_RESP,
