@@ -342,7 +342,7 @@ class ELM:
                 else:
                     logging.error(
                         "Internal error - Missing response for %s, PID %s", cmd, pid)
-                    return self.ELM_R_OK
+                    return ELM_R_OK
         if "unknown_" + cmd not in self.counters:
             self.counters["unknown_" + cmd] = 0
         self.counters["unknown_" + cmd] += 1

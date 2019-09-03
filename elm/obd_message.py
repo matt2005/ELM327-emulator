@@ -140,6 +140,11 @@ ObdMessage = {
             'Log': '"Set timeout %s", cmd[4:]',
             'Response': ELM_R_OK
         },
+        'AT_M': {
+            'Request': '^ATM[01]$',
+            'Descr': 'Memory off or on',
+            'Response': ELM_R_OK
+        },
     },
     # OBD Commands
     'engineoff' : {
@@ -177,6 +182,12 @@ ObdMessage = {
         },
     },
     'default' : {
+        'STATUS': {
+            'Request': '^0101' + ELM_MAX_RESP,
+            'Descr': 'Status since DTCs cleared',
+            'Header': ECU_ADDR_E,
+            'Response': ECU_R_ADDR_E + ' 06 41 01 00 07 55 00 \r'
+        },
         'FUEL_STATUS': {
             'Request': '^0103' + ELM_MAX_RESP,
             'Descr': 'Fuel System Status',
@@ -261,7 +272,7 @@ ObdMessage = {
             'Request': '^0121' + ELM_MAX_RESP,
             'Descr': 'Distance Traveled with MIL on',
             'Header': ECU_ADDR_E,
-            'Response': ECU_R_ADDR_E + ' 04 41 21 00 00 \r00 \r'
+            'Response': ECU_R_ADDR_E + ' 04 41 21 00 00 \r'
         },
         'FUEL_RAIL_PRESSURE_DIRECT': {
             'Request': '^0123' + ELM_MAX_RESP,
@@ -280,6 +291,12 @@ ObdMessage = {
             'Descr': 'EGR Error',
             'Header': ECU_ADDR_E,
             'Response': ECU_R_ADDR_E + ' 03 41 2D 80 \r'
+        },
+        'WARM-UP_SINCE_DTC_CLEAR': {
+            'Request': '^0130' + ELM_MAX_RESP,
+            'Descr': 'Number of warm-ups since DTC cleared',
+            'Header': ECU_ADDR_E,
+            'Response': ECU_R_ADDR_E + ' 03 41 30 C8 \r'
         },
         'DISTANCE_SINCE_DTC_CLEAR': {
             'Request': '^0131' + ELM_MAX_RESP,
@@ -303,7 +320,7 @@ ObdMessage = {
             'Request': '^0142' + ELM_MAX_RESP,
             'Descr': 'Control module voltage',
             'Header': ECU_ADDR_E,
-            'Response': ECU_R_ADDR_E + ' 04 41 42 39 D6 \r00 \r'
+            'Response': ECU_R_ADDR_E + ' 04 41 42 39 D6 \r'
         },
         'AMBIANT_AIR_TEMP': {
             'Request': '^0146' + ELM_MAX_RESP,
@@ -333,13 +350,13 @@ ObdMessage = {
             'Request': '^014D' + ELM_MAX_RESP,
             'Descr': 'Time run with MIL on',
             'Header': ECU_ADDR_E,
-            'Response': ECU_R_ADDR_E + ' 04 41 4D 00 00 \r00 \r'
+            'Response': ECU_R_ADDR_E + ' 04 41 4D 00 00 \r'
         },
         'TIME_SINCE_DTC_CLEARED': {
             'Request': '^014E' + ELM_MAX_RESP,
             'Descr': 'Time since trouble codes cleared',
             'Header': ECU_ADDR_E,
-            'Response': ECU_R_ADDR_E + ' 04 41 4E 4C 69 \r00 \r'
+            'Response': ECU_R_ADDR_E + ' 04 41 4E 4C 69 \r'
         },
         'FUEL_TYPE': {
             'Request': '^0151' + ELM_MAX_RESP,
@@ -416,7 +433,7 @@ ObdMessage = {
         'VIN_MESSAGE_COUNT': {
             'Request': '^0901' + ELM_MAX_RESP,
             'Descr': 'VIN Message Count',
-            'Response': ECU_R_ADDR_E + ' 03 49 01 01 \r'
+            'Response': ECU_R_ADDR_E + ' 03 49 01 05 \r'
         },
         'VIN': { # Check this also: https://stackoverflow.com/a/26752855/10598800, https://www.autocheck.com/vehiclehistory/autocheck/en/vinbasics
             'Request': '^0902' + ELM_MAX_RESP,
@@ -433,7 +450,60 @@ ObdMessage = {
         'CALIBRATION_ID_MESSAGE_COUNT': {
             'Request': '^0903' + ELM_MAX_RESP,
             'Descr': 'Calibration ID message count for PID 04',
-            'Response': ECU_R_ADDR_E + ' 03 49 03 01 \r'
+            'Response': ECU_R_ADDR_E + ' 03 49 03 08 \r'
+        },
+        'CALIBRATION_ID': {
+            'Request': '^0904' + ELM_MAX_RESP,
+            'Descr': 'Get Calibration ID',
+            'Response':
+            ECU_R_ADDR_E + ' 10 23 49 04 02 4C 4B 32 \r' +
+            ECU_R_ADDR_E + ' 21 31 2D 31 34 43 32 30 \r' +
+            ECU_R_ADDR_E + ' 22 34 2D 44 42 00 00 4B \r' +
+            ECU_R_ADDR_E + ' 23 56 36 41 2D 31 34 47 \r' +
+            ECU_R_ADDR_E + ' 24 32 35 30 2D 43 43 00 \r' +
+            ECU_R_ADDR_E + ' 25 00 \r'
+        },
+        'CVN_MESSAGE_COUNT': {
+            'Request': '^0905' + ELM_MAX_RESP,
+            'Descr': 'Calibration Verification Numbers message count for PID 06',
+            'Response': ECU_R_ADDR_E + ' 03 49 05 02 \r'
+        },
+        'CVN': {
+            'Request': '^0906' + ELM_MAX_RESP,
+            'Descr': 'Get CVN',
+            'Response':
+            ECU_R_ADDR_E + ' 10 0B 49 06 02 17 91 BC \r' +
+            ECU_R_ADDR_E + ' 21 82 16 E0 62 BE \r'
+        },
+        'IPT_MESSAGE_COUNT': {
+            'Request': '^0907' + ELM_MAX_RESP,
+            'Descr': 'Number of messages to report In-use Performance Tracking for PID 08',
+            'Response': ECU_R_ADDR_E + ' 03 49 07 08 \r'
+        },
+        'IPT': {
+            'Request': '^0908' + ELM_MAX_RESP,
+            'Descr': 'Get In-use Performance Tracking',
+            'Response':
+            ECU_R_ADDR_E + ' 10 23 49 08 10 04 00 0D \r' +
+            ECU_R_ADDR_E + ' 21 09 03 38 03 B1 02 C7 \r' +
+            ECU_R_ADDR_E + ' 22 03 B1 02 E1 03 9C 02 \r' +
+            ECU_R_ADDR_E + ' 23 D4 03 41 03 E5 03 F2 \r' +
+            ECU_R_ADDR_E + ' 24 03 A9 03 CD 00 44 00 \r' +
+            ECU_R_ADDR_E + ' 25 61 \r'
+        },
+        'ECUNAME_MESSAGE_COUNT': {
+            'Request': '^0909' + ELM_MAX_RESP,
+            'Descr': 'Number of messages to report the ECU’s/module’s acronym and text name for PID 0A',
+            'Response': ECU_R_ADDR_E + ' 03 49 09 05 \r'
+        },
+        'ECU_NAME': {
+            'Request': '^090A' + ELM_MAX_RESP,
+            'Descr': 'Get ECU’s/module’s acronym and text name',
+            'Response':
+            ECU_R_ADDR_E + ' 10 17 49 0A 01 45 43 4D \r' +
+            ECU_R_ADDR_E + ' 21 00 2D 45 6E 67 69 6E \r' +
+            ECU_R_ADDR_E + ' 22 65 20 43 6F 6E 74 72 \r' +
+            ECU_R_ADDR_E + ' 23 6F 6C 00 \r'
         }
     },
     'car': {
