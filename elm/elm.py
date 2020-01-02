@@ -336,6 +336,9 @@ class ELM:
                         footer = val['ResponseFooter'](
                             self, cmd, pid, val)
                     response = val['Response']
+                    if self.scenario == 'ISO14230' and 'cmd_proto' in self.counters:
+                        if (self.counters['cmd_proto'] != '4' and self.counters['cmd_proto'] != '5') and (not val['Request'].startswith('^AT')):
+                            response = 'CANERROR\r'
                     if self.scenario == 'J1939' and 'cmd_proto' in self.counters:
                         if self.counters['cmd_proto'] != 'A' and (not val['Request'].startswith('^AT')):
                             response = 'CANERROR\r'

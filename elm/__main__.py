@@ -192,15 +192,21 @@ class Interpreter(Cmd):
 
     def do_scenario(self, arg):
         "Switch to the scenario specified in the argument; if the scenario is\n"\
-        "missing or invalid, defaults to 'car'."
+        "missing or invalid, switch to 'default'."
         if len(arg.split()) == 1 and arg.split()[0] in [
                 sc for sc in emulator.ObdMessage]:
             self.emulator.scenario = arg.split()[0]
         else:
             if len(arg.split()) > 0:
                 print("Invalid scenario '%s'" % arg)
-            self.emulator.scenario = 'car'
+            self.emulator.scenario = 'default'
         print("Emulator scenario switched to '%s'" % self.emulator.scenario)
+        if self.emulator.scenario == "ISO14230":
+            self.emulator.counters['cmd_proto'] = '5'
+        elif self.emulator.scenario == "J1939":
+            self.emulator.counters['cmd_proto'] = 'A'
+        else:
+            self.emulator.counters['cmd_proto'] = '6'
 
     def complete_merge(self, text, line, start_index, end_index):
         if text:
