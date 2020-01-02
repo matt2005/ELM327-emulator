@@ -342,6 +342,9 @@ class ELM:
                     if self.scenario == 'J1939' and 'cmd_proto' in self.counters:
                         if self.counters['cmd_proto'] != 'A' and (not val['Request'].startswith('^AT')):
                             response = 'CANERROR\r'
+                    if (self.scenario != 'ISO14230' and self.scenario != 'J1939') and 'cmd_proto' in self.counters:
+                        if self.counters['cmd_proto'] != '6' and (not val['Request'].startswith('^AT')):
+                            response = 'CANERROR\r'
                     if isinstance(response, (list, tuple)):
                         response = response[randint(0, len(response)-1)]
                     return (header + response + footer)
