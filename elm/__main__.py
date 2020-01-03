@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from .obd_message import ECU_ADDR_FUNC_68, ECU_ADDR_FUNC_45, ECU_ADDR_FUNC_A
 try:
     if sys.hexversion < 0x3050000:
         raise ImportError("Python version must be >= 3.5")
@@ -203,10 +204,13 @@ class Interpreter(Cmd):
         print("Emulator scenario switched to '%s'" % self.emulator.scenario)
         if self.emulator.scenario == "ISO14230":
             self.emulator.counters['cmd_proto'] = '5'
+            self.emulator.counters['cmd_header'] = ECU_ADDR_FUNC_45
         elif self.emulator.scenario == "J1939":
             self.emulator.counters['cmd_proto'] = 'A'
+            self.emulator.counters['cmd_header'] = ECU_ADDR_FUNC_A
         else:
             self.emulator.counters['cmd_proto'] = '6'
+            self.emulator.counters['cmd_header'] = ECU_ADDR_FUNC_68
 
     def complete_merge(self, text, line, start_index, end_index):
         if text:
@@ -224,8 +228,7 @@ class Interpreter(Cmd):
                 emulator.ObdMessage.update(ObdMessage)
                 print("ObdMessage successfully imported and merged. "
                       "Available scenarios:")
-                print("%s" % ', '.join([
-                sc for sc in emulator.ObdMessage]))
+                print("%s" % ', '.join([sc for sc in emulator.ObdMessage]))
             except Exception as e:
                 print("Error merging '%s': %s." % (arg, e))
         else:

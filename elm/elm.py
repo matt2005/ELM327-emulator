@@ -13,7 +13,7 @@ import time
 import sys
 import traceback
 from random import randint
-from .obd_message import ObdMessage, ECU_ADDR_E, ELM_R_OK
+from .obd_message import ObdMessage, ECU_ADDR_FUNC_68, ELM_R_OK
 
 def setup_logging(
         default_path=Path(__file__).stem + '.yaml',
@@ -61,7 +61,7 @@ class ELM:
             del(self.counters[i])
         self.counters['ELM_PIDS_A'] = 0
         self.counters['ELM_MIDS_A'] = 0
-        self.counters["cmd_header"] = ECU_ADDR_E
+        self.counters["cmd_header"] = ECU_ADDR_FUNC_68
 
     def set_defaults(self):
         self.scenario = 'default'
@@ -221,11 +221,9 @@ class ELM:
     def write(self, resp):
         """ write a response to the port """
 
-        n = "\r\n" if 'cmd_linefeeds' in self.counters and self.counters[
-            'cmd_linefeeds'] == 1 else "\r"
+        n = "\r\n" if 'cmd_linefeeds' in self.counters and self.counters['cmd_linefeeds'] == 1 else "\r"
         resp += n + ">"
-        nospaces = 1 if 'cmd_spaces' in self.counters and self.counters[
-            'cmd_spaces'] == 0 else 0
+        nospaces = 1 if 'cmd_spaces' in self.counters and self.counters['cmd_spaces'] == 0 else 0
 
         j=0
         for i in re.split(r'\0([^\0]+)\0', resp):
@@ -289,8 +287,16 @@ class ELM:
             key = i[0]
             val = i[1]
             if 'Request' in val and re.match(val['Request'], cmd):
-                if 'Header' in val and val['Header'] != self.counters["cmd_header"]:
-                    continue
+                if 'Header' in val:
+                    if isinstance(val['Header'], (list, tuple)):
+                        flag = False
+                        for item in val['Header']:
+                            flag = flag or self.sanitize(item) == self.sanitize(self.counters["cmd_header"])
+                        if not flag:
+                            continue
+                    else:
+                        if self.sanitize(val['Header']) != self.sanitize(self.counters["cmd_header"]):
+                            continue
                 if key:
                     pid = key
                 else:
@@ -299,42 +305,34 @@ class ELM:
                     self.counters[pid] = 0
                 self.counters[pid] += 1
                 if 'Action' in val and val['Action'] == 'skip':
-                    logging.info("Received %s. PID %s. Action=%s", cmd, pid,
-                                  val['Action'])
+                    logging.info("Received %s. PID %s. Action=%s", cmd, pid, val['Action'])
                     continue
                 if 'Descr' in val:
-                    logging.debug("Description: %s, PID %s (%s)",
-                                  val['Descr'], pid, cmd)
+                    logging.debug("Description: %s, PID %s (%s)", val['Descr'], pid, cmd)
                 else:
-                    logging.error(
-                        "Internal error - Missing description for %s, PID %s", cmd, pid)
+                    logging.error("Internal error - Missing description for %s, PID %s", cmd, pid)
                 if pid in self.answer:
                     try:
                         return(self.answer[pid])
                     except Exception as e:
-                        logging.error(
-                        "Error while processing '%s' for PID %s (%s)", self.answer, pid, e)
+                        logging.error("Error while processing '%s' for PID %s (%s)", self.answer, pid, e)
                 if 'Exec' in val:
                     try:
                         exec(val['Exec'])
                     except Exception as e:
-                        logging.error(
-                        "Cannot execute '%s' for PID %s (%s)", val['Exec'], pid, e)
+                        logging.error("Cannot execute '%s' for PID %s (%s)", val['Exec'], pid, e)
                 if 'Log' in val:
                     try:
                         exec("logging.debug(" + val['Log'] + ")")
                     except Exception as e:
-                        logging.error(
-                        "Error while logging '%s' for PID %s (%s)", val['Log'], pid, e)
+                        logging.error("Error while logging '%s' for PID %s (%s)", val['Log'], pid, e)
                 if 'Response' in val:
                     header = ''
                     if 'ResponseHeader' in val:
-                        header = val['ResponseHeader'](
-                            self, cmd, pid, val)
+                        header = val['ResponseHeader'](self, cmd, pid, val)
                     footer = ''
                     if 'ResponseFooter' in val:
-                        footer = val['ResponseFooter'](
-                            self, cmd, pid, val)
+                        footer = val['ResponseFooter'](self, cmd, pid, val)
                     response = val['Response']
                     if self.scenario == 'ISO14230' and 'cmd_proto' in self.counters:
                         if (self.counters['cmd_proto'] != '4' and self.counters['cmd_proto'] != '5') and (not val['Request'].startswith('^AT')):
@@ -349,8 +347,7 @@ class ELM:
                         response = response[randint(0, len(response)-1)]
                     return (header + response + footer)
                 else:
-                    logging.error(
-                        "Internal error - Missing response for %s, PID %s", cmd, pid)
+                    logging.error("Internal error - Missing response for %s, PID %s", cmd, pid)
                     return ELM_R_OK
         if "unknown_" + cmd not in self.counters:
             self.counters["unknown_" + cmd] = 0

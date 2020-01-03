@@ -1,4 +1,7 @@
 # List of known ECUs:
+ECU_ADDR_FUNC_68 = "7DF"  # Functionally address of protocol number: 6,8
+ECU_ADDR_FUNC_45 = "C7 33 F1"  # Functionally address of protocol number: 4,5
+ECU_ADDR_FUNC_A = "EA FF F9"  # Functionally address of protocol number: A
 ECU_ADDR_H = "7E2"  # HVECU address (Hybrid contol module)
 ECU_R_ADDR_H = "7EA"  # Responses sent by HVECU (Hybrid contol module) 7E2/7EA
 ECU_ADDR_E = "7E0"  # Engine ECU address
@@ -203,13 +206,13 @@ ObdMessage = {
         'STATUS': {
             'Request': '^0101' + ELM_MAX_RESP,
             'Descr': 'Status since DTCs cleared',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 06 41 01 00 07 55 00 \r'
         },
         # 'STATUS': {
         #     'Request': '^0101' + ELM_MAX_RESP,
         #     'Descr': 'Status since DTCs cleared',
-        #     'Header': ECU_ADDR_E,
+        #     'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
         #     'Response': 'NO DATA\r'
         # },
         # 'STATUS': {
@@ -222,31 +225,31 @@ ObdMessage = {
         'FUEL_STATUS': {
             'Request': '^0103' + ELM_MAX_RESP,
             'Descr': 'Fuel System Status',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 03 00 00 \r'
         },
         'ENGINE_LOAD': {
             'Request': '^0104' + ELM_MAX_RESP,
             'Descr': 'Calculated Engine Load',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 04 00 \r'
         },
         'COOLANT_TEMP': {
             'Request': '^0105' + ELM_MAX_RESP,
             'Descr': 'Engine Coolant Temperature',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 05 41 05 7B \r'
         },
         'INTAKE_PRESSURE': {
             'Request': '^010B' + ELM_MAX_RESP,
             'Descr': 'Intake Manifold Pressure',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 0B 73 \r'
         },
         'RPM': {
             'Request': '^010C' + ELM_MAX_RESP,
             'Descr': 'Engine RPM',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': '',
             'ResponseFooter': \
             lambda self, cmd, pid, val: \
@@ -259,7 +262,7 @@ ObdMessage = {
         'SPEED': {
             'Request': '^010D' + ELM_MAX_RESP,
             'Descr': 'Vehicle Speed',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': '',
             'ResponseFooter': \
             lambda self, cmd, pid, val: \
@@ -272,25 +275,25 @@ ObdMessage = {
         'INTAKE_TEMP': {
             'Request': '^010F' + ELM_MAX_RESP,
             'Descr': 'Intake Air Temp',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 0F 44 \r'
         },
         'MAF': {
             'Request': '^0110' + ELM_MAX_RESP,
             'Descr': 'Air Flow Rate (MAF)',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 10 05 1F \r'
         },
         'THROTTLE_POS': {
             'Request': '^0111' + ELM_MAX_RESP,
             'Descr': 'Throttle Position',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 11 FF \r'
         },
         'OBD_COMPLIANCE': {
             'Request': '^011C' + ELM_MAX_RESP,
             'Descr': 'OBD Standards Compliance',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
             ECU_R_ADDR_H + ' 03 41 1C 06 \r' +
             ECU_R_ADDR_E + ' 03 41 1C 2B \r'
@@ -298,121 +301,121 @@ ObdMessage = {
         # 'OBD_COMPLIANCE': {
         #     'Request': '^011C' + ELM_MAX_RESP,
         #     'Descr': 'OBD Standards Compliance',
-        #     'Header': ECU_ADDR_E,
+        #     'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
         #     'Response': 'NO DATA\r'
         # },
         'RUN_TIME': {
             'Request': '^011F' + ELM_MAX_RESP,
             'Descr': 'Engine Run Time',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 1F 00 8C \r'
         },
         'DISTANCE_W_MIL': {
             'Request': '^0121' + ELM_MAX_RESP,
             'Descr': 'Distance Traveled with MIL on',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 21 00 00 \r'
         },
         'FUEL_RAIL_PRESSURE_DIRECT': {
             'Request': '^0123' + ELM_MAX_RESP,
             'Descr': 'Fuel Rail Pressure (direct inject)',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 23 1A 0E \r'
         },
         'COMMANDED_EGR': {
             'Request': '^012C' + ELM_MAX_RESP,
             'Descr': 'Commanded EGR',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 2C 0D \r'
         },
         'EGR_ERROR': {
             'Request': '^012D' + ELM_MAX_RESP,
             'Descr': 'EGR Error',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 2D 80 \r'
         },
         'WARM-UP_SINCE_DTC_CLEAR': {
             'Request': '^0130' + ELM_MAX_RESP,
             'Descr': 'Number of warm-ups since DTC cleared',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 30 C8 \r'
         },
         'DISTANCE_SINCE_DTC_CLEAR': {
             'Request': '^0131' + ELM_MAX_RESP,
             'Descr': 'Distance traveled since codes cleared',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 31 C8 1F \r'
         },
         'BAROMETRIC_PRESSURE': {
             'Request': '^0133' + ELM_MAX_RESP,
             'Descr': 'Barometric Pressure',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 33 65 \r'
         },
         'CATALYST_TEMP_B1S1': {
             'Request': '^013C' + ELM_MAX_RESP,
             'Descr': 'Catalyst Temperature: Bank 1 - Sensor 1',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 3C 04 44 \r'
         },
         'CONTROL_MODULE_VOLTAGE': {
             'Request': '^0142' + ELM_MAX_RESP,
             'Descr': 'Control module voltage',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 42 39 D6 \r'
         },
         'LAMBDA': {
             'Request': '^0144' + ELM_MAX_RESP,
             'Descr': 'Fuel/Air Commanded Equivalence Ratio',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 44 43 43 \r'
         },
         'AMBIANT_AIR_TEMP': {
             'Request': '^0146' + ELM_MAX_RESP,
             'Descr': 'Ambient air temperature',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 46 43 \r'
         },
         'ACCELERATOR_POS_D': {
             'Request': '^0149' + ELM_MAX_RESP,
             'Descr': 'Accelerator pedal position D',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 49 00 \r'
         },
         'ACCELERATOR_POS_E': {
             'Request': '^014A' + ELM_MAX_RESP,
             'Descr': 'Accelerator pedal position E',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 4A 45 \r'
         },
         'THROTTLE_ACTUATOR': {
             'Request': '^014C' + ELM_MAX_RESP,
             'Descr': 'Commanded throttle actuator',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 4C 00 \r'
         },
         'RUN_TIME_MIL': {
             'Request': '^014D' + ELM_MAX_RESP,
             'Descr': 'Time run with MIL on',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 4D 00 00 \r'
         },
         'TIME_SINCE_DTC_CLEARED': {
             'Request': '^014E' + ELM_MAX_RESP,
             'Descr': 'Time since trouble codes cleared',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 4E 4C 69 \r'
         },
         'FUEL_TYPE': {
             'Request': '^0151' + ELM_MAX_RESP,
             'Descr': 'Fuel Type',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 03 41 51 01 \r'
         },
         'FUEL_INJECT_TIMING': {
             'Request': '^015D' + ELM_MAX_RESP,
             'Descr': 'Fuel injection timing',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 5D 66 00 \r'
         },
         # Supported PIDs for protocols
@@ -519,6 +522,7 @@ ObdMessage = {
         },
         'ELM_PIDS_9A': {
             'Request': '^0900' + ELM_MAX_RESP,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Descr': 'PIDS_9A',
             'Response':
             ECU_R_ADDR_H + ' 06 49 00 14 00 00 00 \r' +
@@ -713,7 +717,6 @@ ObdMessage = {
         'ELM_PIDS_A': {
             'Request': '^0100' + ELM_MAX_RESP,
             'Descr': 'Support PID 01~20',
-            'Header': ECU_ADDR_E,
             'Response': '86 F1 11 41 00 BE 3E B8 11 8E \r'
         },
         'ELM_PIDS_B': {
@@ -800,7 +803,7 @@ ObdMessage = {
         'ELM_PIDS_A': {
             'Request': '^22F400' + ELM_MAX_RESP,
             'Descr': 'Support PID 01~20',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 07 62 F4 00 BE 3F A8 13 \r'
         },
         'ELM_PIDS_B': {
@@ -816,31 +819,31 @@ ObdMessage = {
         'F401': {
             'Request': '^22F401' + ELM_MAX_RESP,
             'Descr': 'Status since DTCs cleared',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 07 62 F4 01 00 0F AA 00 \r'
         },
         'F41C': {
             'Request': '^22F41C' + ELM_MAX_RESP,
             'Descr': 'OBD Standards Compliance',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 22 F4 1C 06 \r'
         },
         'F421': {
             'Request': '^22F421' + ELM_MAX_RESP,
             'Descr': 'Distance Traveled with MIL on',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 05 62 F4 21 00 00 \r'
         },
         'F800': {
             'Request': '^22F800' + ELM_MAX_RESP,
             'Descr': 'Support ITID 01~20',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 07 62 F8 00 54 69 80 00 \r'
         },
         'F802': {
             'Request': '^22F802' + ELM_MAX_RESP,
             'Descr': 'Get Vehicle Identification Number',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
             ECU_R_ADDR_E + ' 10 14 62 F8 02 4C 4A 58 \r' +
             ECU_R_ADDR_E + ' 21 43 4C 44 44 42 35 4B \r' +
@@ -849,7 +852,7 @@ ObdMessage = {
         'F804': {
             'Request': '^22F804' + ELM_MAX_RESP,
             'Descr': 'Get Calibration ID',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
             ECU_R_ADDR_E + ' 10 23 62 F8 04 4C 4B 32 \r' +
             ECU_R_ADDR_E + ' 21 31 2D 31 34 43 32 30 \r' +
@@ -861,7 +864,7 @@ ObdMessage = {
         # 'F804': {
         #     'Request': '^22F804' + ELM_MAX_RESP,
         #     'Descr': 'Get Calibration ID',
-        #     'Header': ECU_ADDR_E,
+        #     'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
         #     'Response':
         #     ECU_R_ADDR_E + ' 10 13 62 F8 04 4C 4B 32 \r' +
         #     ECU_R_ADDR_E + ' 21 31 2D 31 34 43 32 30 \r' +
@@ -870,7 +873,7 @@ ObdMessage = {
         'F806': {
             'Request': '^22F806' + ELM_MAX_RESP,
             'Descr': 'Get CVN',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
             ECU_R_ADDR_E + ' 10 0B 62 F8 06 DC 41 EC \r' +
             ECU_R_ADDR_E + ' 21 C0 92 9E D9 D2 00 00 \r'
@@ -878,14 +881,14 @@ ObdMessage = {
         # 'F806': {
         #     'Request': '^22F806' + ELM_MAX_RESP,
         #     'Descr': 'Get CVN',
-        #     'Header': ECU_ADDR_E,
+        #     'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
         #     'Response':
         #     ECU_R_ADDR_E + ' 07 62 F8 06 DC 41 EC C0 \r'
         # },
         'F80A': {
             'Request': '^22F80A' + ELM_MAX_RESP,
             'Descr': 'Get ECU’s/module’s acronym and text name',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
             ECU_R_ADDR_E + ' 10 17 62 F8 0A 45 43 4D \r' +
             ECU_R_ADDR_E + ' 21 00 2D 45 6E 67 69 6E \r' +
@@ -906,7 +909,7 @@ ObdMessage = {
         'F80D': {
             'Request': '^22F80D' + ELM_MAX_RESP,
             'Descr': 'Get Engine Serial Number',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
             ECU_R_ADDR_E + ' 10 14 62 F8 0D 3F 3F 3F \r' +
             ECU_R_ADDR_E + ' 21 3F 3F 3F 3F 3F 3F 3F \r' +
@@ -915,13 +918,13 @@ ObdMessage = {
         'F810': {
             'Request': '^22F810' + ELM_MAX_RESP,
             'Descr': 'Get Protocol Identification',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 62 F8 10 01 \r'
         },
         'F811': {
             'Request': '^22F811' + ELM_MAX_RESP,
             'Descr': 'Get WWH-OBD GTR Number',
-            'Header': ECU_ADDR_E,
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
             ECU_R_ADDR_E + ' 10 0E 62 F8 11 47 54 52 \r' +
             ECU_R_ADDR_E + ' 21 5F 30 30 35 2E 30 30 \r' +
