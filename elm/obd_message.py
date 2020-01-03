@@ -1,7 +1,7 @@
 # List of known ECUs:
-ECU_ADDR_FUNC_68 = "7DF"  # Functionally address of protocol number: 6,8
-ECU_ADDR_FUNC_45 = "C7 33 F1"  # Functionally address of protocol number: 4,5
-ECU_ADDR_FUNC_A = "EA FF F9"  # Functionally address of protocol number: A
+ECU_ADDR_FUNC_68 = "7DF"  # Functional address of protocol number: 6,8
+ECU_ADDR_FUNC_45 = "C7 33 F1"  # Functional address of protocol number: 4,5
+ECU_ADDR_FUNC_A = "EA FF F9"  # Functional address of protocol number: A
 ECU_ADDR_H = "7E2"  # HVECU address (Hybrid contol module)
 ECU_R_ADDR_H = "7EA"  # Responses sent by HVECU (Hybrid contol module) 7E2/7EA
 ECU_ADDR_E = "7E0"  # Engine ECU address
