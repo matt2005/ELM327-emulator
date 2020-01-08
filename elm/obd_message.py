@@ -60,7 +60,8 @@ ObdMessage = {
             'Exec': 'time.sleep(0.1)',
             'ResponseHeader': \
             lambda self, cmd, pid, val: \
-                ELM327_PROTO_STR[int(self.counters["cmd_proto"])] if 'cmd_proto' in self.counters else "ISO 15765-4 CAN (11 bit ID, 500k baud)",
+                ELM327_PROTO_STR[int(self.counters["cmd_proto"])] if 'cmd_proto' in self.counters \
+                    else "ISO 15765-4 CAN (11 bit ID, 500k baud)",
             'Response': "\r"
         },
         'AT_DESCRIBE_PROTO_N': {
@@ -296,7 +297,7 @@ ObdMessage = {
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
             ECU_R_ADDR_H + ' 03 41 1C 06 \r' +
-            ECU_R_ADDR_E + ' 03 41 1C 2B \r'
+            ECU_R_ADDR_E + ' 03 41 1C 29 \r'
         },
         # 'OBD_COMPLIANCE': {
         #     'Request': '^011C' + ELM_MAX_RESP,
@@ -593,9 +594,9 @@ ObdMessage = {
         #     ECU_R_ADDR_H + ' 10 13 49 04 01 00 00 00 \r' +
         #     ECU_R_ADDR_H + ' 21 00 00 00 00 00 00 00 \r' +
         #     ECU_R_ADDR_H + ' 22 00 00 00 00 00 00 AA \r' +
-        #     ECU_R_ADDR_E + ' 10 13 49 04 01 2C 1F 25 \r' +
-        #     ECU_R_ADDR_E + ' 21 26 20 3B 2E 22 20 29 \r' +
-        #     ECU_R_ADDR_E + ' 22 1E 1F 20 1F 14 14 AA \r'
+        #     ECU_R_ADDR_E + ' 10 13 49 04 01 20 20 20 \r' +
+        #     ECU_R_ADDR_E + ' 21 20 20 20 20 20 20 20 \r' +
+        #     ECU_R_ADDR_E + ' 22 20 20 20 20 20 20 AA \r'
         # },
         'CVN_MESSAGE_COUNT': {
             'Request': '^0905' + ELM_MAX_RESP,
