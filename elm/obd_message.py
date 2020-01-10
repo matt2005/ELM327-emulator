@@ -966,7 +966,7 @@ ObdMessage = {
         # },
     },
     'J1939': {
-        'ELM_PIDS_A': {
+        'DM5': {
             'Request': '^00FECE' + ELM_MAX_RESP,
             'Descr': 'DM5',
             'Response': '6 0FECE 00 00 01 29 06 00 08 00 08 \r'
