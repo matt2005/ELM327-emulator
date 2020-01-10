@@ -971,6 +971,11 @@ ObdMessage = {
             'Descr': 'DM5',
             'Response': '6 0FECE 00 00 01 29 06 00 08 00 08 \r'
         },
+        # 'DM5': {
+        #     'Request': '^00FECE' + ELM_MAX_RESP,
+        #     'Descr': 'DM5',
+        #     'Response': '00 FE CE \r\r ERR94 \r'
+        # },
         'VIN': {
             'Request': '^00FEEC' + ELM_MAX_RESP,
             'Descr': 'Get Vehicle Identification Number',
