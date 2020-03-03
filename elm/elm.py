@@ -4,16 +4,17 @@ from pathlib import Path
 import yaml
 import re
 import os
+
 if os.name == 'nt':
     import serial
 else:
     import pty
 import threading
 import time
-import sys
 import traceback
 from random import randint
 from .obd_message import ObdMessage, ECU_ADDR_FUNC_68, ELM_R_OK
+
 
 def setup_logging(
         default_path=Path(__file__).stem + '.yaml',
@@ -30,35 +31,39 @@ def setup_logging(
     else:
         logging.basicConfig(level=default_level)
 
+
 class THREAD:
     STOPPED = 0
     STARTING = 1
     ACTIVE = 2
     PAUSED = 3
 
+
 class ELM:
     ELM_VALID_CHARS = r"[a-zA-Z0-9 \n\r]*"
 
     # Other AT commands (still to be implemented...)
-    ELM_DEFAULTS           = r"ATD$"
-    ELM_SET_PROTO          = r"ATSPA?[0-9A-C]$"
-    ELM_ERASE_PROTO        = r"ATSP00$"
+    ELM_DEFAULTS = r"ATD$"
+    ELM_SET_PROTO = r"ATSPA?[0-9A-C]$"
+    ELM_ERASE_PROTO = r"ATSP00$"
 
-    def Sequence(self, pid, base, max, factor, n_bytes):
+    def sequence(self, pid, base, max_, factor, n_bytes):
         c = self.counters[pid]
         # compute the new value [= factor * ( counter % (max * 2) )]
-        p = int (factor * abs( max - ( c + max ) % (max * 2) ) ) + base
+        p = int(factor * abs(max_ - (c + max_) % (max_ * 2))) + base
         # get its hex string
         s = ("%.X" % p).zfill(n_bytes * 2)
         # space the string into chunks of two bytes
-        return (" ".join(s[i:i + 2] for i in range(0, len(s), 2)))
+        return " ".join(s[i:i + 2] for i in range(0, len(s), 2))
 
     def reset(self, sleep):
-        """ returns all settings to their defaults """
+        """
+        returns all settings to their defaults
+        """
         logging.debug("Resetting counters and sleeping for %s seconds", sleep)
         time.sleep(sleep)
         for i in [k for k in self.counters if k.startswith('cmd_')]:
-            del(self.counters[i])
+            del (self.counters[i])
         self.counters['ELM_PIDS_A'] = 0
         self.counters['ELM_MIDS_A'] = 0
         self.counters["cmd_header"] = ECU_ADDR_FUNC_68
@@ -74,14 +79,15 @@ class ELM:
         if 'default' in self.ObdMessage and 'AT' in self.ObdMessage:
             # Perform a union of the three subdictionaries
             self.sortedOBDMsg = {
-                **self.ObdMessage['default'], # highest priority
+                **self.ObdMessage['default'],  # highest priority
                 **self.ObdMessage['AT'],
-                **self.ObdMessage[self.scenario] # lowest priority ('Priority' to be checked)
-                }
+                **self.ObdMessage[self.scenario]  # lowest priority ('Priority' to be checked)
+            }
         else:
-            self.sortedOBDMsg = { **self.ObdMessage[self.scenario] }
+            self.sortedOBDMsg = {**self.ObdMessage[self.scenario]}
         # Add 'Priority' to all pids and sort basing on priority (highest = 1, lowest=10)
-        self.sortedOBDMsg = sorted(self.sortedOBDMsg.items(), key = lambda x: x[1]['Priority'] if 'Priority' in x[1] else 10 )
+        self.sortedOBDMsg = sorted(self.sortedOBDMsg.items(),
+                                   key=lambda x: x[1]['Priority'] if 'Priority' in x[1] else 10)
 
     def __init__(self, batch_mode, serial_port):
         self.ObdMessage = ObdMessage
@@ -94,16 +100,12 @@ class ELM:
     def __enter__(self):
         if os.name == 'nt':
             try:
-                self.master_fd = serial.Serial(
-                    port=self.serial_port,
-                    baudrate=38400)
+                self.master_fd = serial.Serial(port=self.serial_port, baudrate=38400)
             except Exception as e:
-                logging.critical("Error while opening %s:\n%s",
-                              repr(self.serial_port), e)
+                logging.critical("Error while opening %s:\n%s", repr(self.serial_port), e)
                 return None
             self.slave_fd = None
-            self.slave_name = 'com0com serial port pair reading from ' + \
-                self.serial_port
+            self.slave_name = 'virtual serial port pair reading from ' + self.serial_port
         else:
             # make a new pty
             self.master_fd, self.slave_fd = pty.openpty()
@@ -117,7 +119,7 @@ class ELM:
 
         return self.slave_name
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type, exc_value, exc_traceback):
         self.threadState = THREAD.STOPPED
         time.sleep(0.1)
         if os.name == 'nt':
@@ -127,16 +129,15 @@ class ELM:
             os.close(self.master_fd)
         return False  # don't suppress any exceptions
 
-    def run(self): # daemon thread
+    def run(self):  # daemon thread
         setup_logging()
         self.logger = logging.getLogger()
         if not self.batch_mode:
             logging.info('\n\nELM327 OBD-II adapter emulator started\n')
+
         """ the ELM's main IO loop """
-        
         self.threadState = THREAD.ACTIVE
         while self.threadState != THREAD.STOPPED:
-
             if self.threadState == THREAD.PAUSED:
                 time.sleep(0.1)
                 continue
@@ -159,8 +160,7 @@ class ELM:
                 try:
                     resp = self.handle(self.cmd)
                 except Exception as e:
-                    logging.critical("Error while processing %s:\n%s\n%s",
-                                  repr(self.cmd), e, traceback.format_exc())
+                    logging.critical("Error while processing %s:\n%s\n%s", repr(self.cmd), e, traceback.format_exc())
                     continue
                 self.write(resp)
             else:
@@ -168,10 +168,8 @@ class ELM:
 
     def read(self):
         """
-            reads the next newline delimited command from the port
-            filters 
-
-            returns a normalized string command
+        reads the next newline delimited command from the port filters
+        returns a normalized string command
         """
         buffer = ""
         first = True
@@ -181,10 +179,10 @@ class ELM:
             req_timeout = float(self.counters['req_timeout'])
         except Exception as e:
             if 'req_timeout' in self.counters:
-                logging.error("Improper configuration of\n\"self.counters"\
+                logging.error("Improper configuration of\n\"self.counters"
                               "['req_timeout']\": '%s' (%s). Resetting it to %s",
                               self.counters['req_timeout'], e, self.max_req_timeout
-                             )
+                              )
             self.counters['req_timeout'] = req_timeout
         while True:
             prev_time = time.time()
@@ -193,8 +191,8 @@ class ELM:
                     try:
                         c = self.master_fd.read(1).decode()
                     except Exception:
-                        logging.debug("Error while reading from com0com serial port")
-                        return('')
+                        logging.error("Error while reading from " + self.serial_port)
+                        return ''
                     if 'cmd_echo' in self.counters and self.counters['cmd_echo'] == 1:
                         self.master_fd.write(c.encode())
                 else:
@@ -203,10 +201,10 @@ class ELM:
                         os.write(self.master_fd, c.encode())
             except UnicodeDecodeError as e:
                 logging.warning("Invalid character received: %s", e)
-                return('')
+                return ''
             except OSError:
-                return('')
-            if prev_time + req_timeout < time.time() and first == False:
+                return ''
+            if prev_time + req_timeout < time.time() and not first:
                 buffer = ""
                 logging.debug("'req_timeout' timeout while reading data: %s", c)
             if c == '\r':
@@ -219,13 +217,14 @@ class ELM:
         return buffer
 
     def write(self, resp):
-        """ write a response to the port """
-
+        """
+        write a response to the port
+        """
         n = "\r\n" if 'cmd_linefeeds' in self.counters and self.counters['cmd_linefeeds'] == 1 else "\r"
         resp += n + ">"
         nospaces = 1 if 'cmd_spaces' in self.counters and self.counters['cmd_spaces'] == 0 else 0
 
-        j=0
+        j = 0
         for i in re.split(r'\0([^\0]+)\0', resp):
             if j % 2:
                 msg = i.strip()
@@ -234,7 +233,7 @@ class ELM:
                     if nospaces:
                         evalmsg = re.sub(r'[ \t]+', '', evalmsg)
                     logging.debug("Evaluated command: %s", msg)
-                    if evalmsg != None:
+                    if evalmsg is not None:
                         if os.name == 'nt':
                             self.master_fd.write(evalmsg.encode())
                         else:
@@ -258,17 +257,15 @@ class ELM:
             j += 1
 
     def validate(self, cmd):
-
         if not re.match(self.ELM_VALID_CHARS, cmd):
             return False
-
         # TODO: more tests
-
         return True
 
     def handle(self, cmd):
-        """ handles all commands """
-
+        """
+        handles all commands
+        """
         cmd = self.sanitize(cmd)
 
         if 'commands' not in self.counters:
@@ -279,7 +276,7 @@ class ELM:
         if self.delay > 0:
             time.sleep(self.delay)
 
-        if not self.scenario in self.ObdMessage:
+        if self.scenario not in self.ObdMessage:
             logging.error("Unknown scenario %s", repr(self.scenario))
             return ""
 
@@ -313,7 +310,7 @@ class ELM:
                     logging.error("Internal error - Missing description for %s, PID %s", cmd, pid)
                 if pid in self.answer:
                     try:
-                        return(self.answer[pid])
+                        return self.answer[pid]
                     except Exception as e:
                         logging.error("Error while processing '%s' for PID %s (%s)", self.answer, pid, e)
                 if 'Exec' in val:
@@ -335,7 +332,8 @@ class ELM:
                         footer = val['ResponseFooter'](self, cmd, pid, val)
                     response = val['Response']
                     if self.scenario == 'ISO14230' and 'cmd_proto' in self.counters:
-                        if (self.counters['cmd_proto'] != '4' and self.counters['cmd_proto'] != '5') and (not val['Request'].startswith('^AT')):
+                        if (self.counters['cmd_proto'] != '4' and self.counters['cmd_proto'] != '5') and (
+                                not val['Request'].startswith('^AT')):
                             response = 'CANERROR\r'
                     if self.scenario == 'J1939' and 'cmd_proto' in self.counters:
                         if self.counters['cmd_proto'] != 'A' and (not val['Request'].startswith('^AT')):
@@ -344,8 +342,8 @@ class ELM:
                         if self.counters['cmd_proto'] != '6' and (not val['Request'].startswith('^AT')):
                             response = 'CANERROR\r'
                     if isinstance(response, (list, tuple)):
-                        response = response[randint(0, len(response)-1)]
-                    return (header + response + footer)
+                        response = response[randint(0, len(response) - 1)]
+                    return header + response + footer
                 else:
                     logging.error("Internal error - Missing response for %s, PID %s", cmd, pid)
                     return ELM_R_OK

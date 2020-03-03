@@ -3,6 +3,7 @@
 
 import sys
 from .obd_message import ECU_ADDR_FUNC_68, ECU_ADDR_FUNC_45, ECU_ADDR_FUNC_A
+
 try:
     if sys.hexversion < 0x3050000:
         raise ImportError("Python version must be >= 3.5")
@@ -15,6 +16,8 @@ try:
     import glob
     import os.path
     import argparse
+    import importlib
+
     if os.name == 'nt':
         import tendo.ansiterm
     try:
@@ -25,19 +28,19 @@ except ImportError as detail:
     print("ELM327 OBDII adapter emulator error:\n " + str(detail))
     sys.exit(1)
 
-class Interpreter(Cmd):
 
+class Interpreter(Cmd):
     __hiden_methods = ('do_EOF',)
     rlc = rlcompleter.Completer().complete
     histfile = os.path.expanduser('~/.ELM327_emulator_history')
     histfile_size = 1000
 
-    def __init__(self, emulator, args):
-        self.emulator = emulator
+    def __init__(self, emulator_, args_):
+        self.emulator = emulator_
         self.prompt_active = True
         self.color_active = True
         self.__set_ps_string('CMD')
-        if args.batch_mode:
+        if args_.batch_mode:
             self.prompt_active = False
             self.color_active = False
             Cmd.prompt = ''
@@ -61,12 +64,12 @@ class Interpreter(Cmd):
         if args.batch_mode:
             return
         self.stdout.write(
-        "Available commands include the following list (type help <topic>"
-        "\nfor more information on each command). Besides, any Python"
-        "\ncommand is accepted. Autocompletion is fully allowed."
-        "\n=============================================================="
-        "==\n")
-        self.columnize(cmds, maxcol-1)
+            "Available commands include the following list (type help <topic>"
+            "\nfor more information on each command). Besides, any Python"
+            "\ncommand is accepted. Autocompletion is fully allowed."
+            "\n=============================================================="
+            "==\n")
+        self.columnize(cmds, maxcol - 1)
         self.stdout.write("\n")
 
     def emptyline(self):
@@ -82,19 +85,23 @@ class Interpreter(Cmd):
         return [n for n in dir(self.__class__) if n not in self.__hiden_methods]
 
     def do_quit(self, arg):
-        'Quit the emulator'
+        """
+        Quit the emulator
+        """
         if arg:
-            print ("Invalid format")
+            print("Invalid format")
             return
         sys.exit(0)
-    
+
     def do_delay(self, arg):
-        "Delay each command of the seconds specified in the argument.\n"\
-        "(Floating point number; default is 0.5 seconds.)"
+        """
+        Delay each command of the seconds specified in the argument.\n
+        (Floating point number; default is 0.5 seconds.)
+        """
         try:
             delay = 0.5 if len(arg) == 0 else float(arg.split()[0])
         except ValueError:
-            print ("Invalid format")
+            print("Invalid format")
             return
         if delay > 0:
             print("Delaying each command of %s seconds" % delay)
@@ -104,18 +111,22 @@ class Interpreter(Cmd):
             self.emulator.delay = 0
 
     def do_wait(self, arg):
-        "Perform an immediate sleep of the seconds specified in the argument.\n"\
-        "(Floating point number; default is 10 seconds.)"
+        """
+        Perform an immediate sleep of the seconds specified in the argument.\n
+        (Floating point number; default is 10 seconds.)
+        """
         try:
             delay = 10 if len(arg) == 0 else float(arg.split()[0])
         except ValueError:
-            print ("Invalid format")
+            print("Invalid format")
             return
         print("Sleeping for %s seconds" % delay)
         time.sleep(delay)
 
     def do_prompt(self, arg):
-        "Toggle prompt off/on or change the prompt."
+        """
+        Toggle prompt off/on or change the prompt.
+        """
         if arg:
             self.__set_ps_string(arg.split()[0])
             return
@@ -124,9 +135,11 @@ class Interpreter(Cmd):
         self.__set_ps()
 
     def do_color(self, arg):
-        "Toggle color off/on."
+        """
+        Toggle color off/on.
+        """
         if arg:
-            print ("Invalid format")
+            print("Invalid format")
             return
         self.color_active = not self.color_active
         if not self.color_active:
@@ -146,19 +159,23 @@ class Interpreter(Cmd):
         return Cmd.postcmd(self, stop, line)
 
     def do_reset(self, arg):
-        "Reset the emulator (counters and variables)"
+        """
+        Reset the emulator (counters and variables)
+        """
         if arg:
-            print ("Invalid format")
+            print("Invalid format")
             return
         self.emulator.set_defaults()
         print("Reset done.")
 
     def do_counters(self, arg):
-        "Print the number of each executed PID (upper case names), the values\n"\
-        "associated to some 'AT' PIDs, the unknown requests, the emulator response\n"\
-        "delay, the total number of executed commands and the current scenario."
+        """
+        Print the number of each executed PID (upper case names), the values\n
+        associated to some 'AT' PIDs, the unknown requests, the emulator response\n
+        delay, the total number of executed commands and the current scenario.
+        """
         if arg:
-            print ("Invalid format")
+            print("Invalid format")
             return
         if self.emulator.counters:
             print("PID Counters:")
@@ -170,17 +187,21 @@ class Interpreter(Cmd):
         print("  {:20s} = {}".format("scenario", self.emulator.scenario))
 
     def do_pause(self, arg):
-        "Pause the execution."
+        """
+        Pause the execution.
+        """
         if arg:
-            print ("Invalid format")
+            print("Invalid format")
             return
         self.emulator.threadState = THREAD.PAUSED
         print("Backend emulator paused")
 
     def do_resume(self, arg):
-        "Resume the execution after pausing; prints the used device."
+        """
+        Resume the execution after pausing; prints the used device.
+        """
         if arg:
-            print ("Invalid format")
+            print("Invalid format")
             return
         self.emulator.threadState = THREAD.ACTIVE
         print("Backend emulator resumed. Running on %s" % pts_name)
@@ -192,10 +213,12 @@ class Interpreter(Cmd):
             return [sc for sc in emulator.ObdMessage]
 
     def do_scenario(self, arg):
-        "Switch to the scenario specified in the argument; if the scenario is\n"\
-        "missing or invalid, switch to 'default'."
+        """
+        Switch to the scenario specified in the argument; if the scenario is\n
+        missing or invalid, switch to 'default'.
+        """
         if len(arg.split()) == 1 and arg.split()[0] in [
-                sc for sc in emulator.ObdMessage]:
+            sc for sc in emulator.ObdMessage]:
             self.emulator.scenario = arg.split()[0]
         else:
             if len(arg.split()) > 0:
@@ -219,55 +242,61 @@ class Interpreter(Cmd):
             return [x[:-3] for x in glob.glob('*.py')]
 
     def do_merge(self, arg):
-        "import a scenario from an external module and merges it with\n"\
-        "the emulator configuration."
-        if len(arg.split()) == 1 and arg.split()[0] in [
-                x[:-3] for x in glob.glob('*.py')]:
+        """
+        import a scenario from an external module and merges it with\n
+        the emulator configuration.
+        """
+        if len(arg.split()) == 1 and arg.split()[0] in [x[:-3] for x in glob.glob('*.py')]:
             try:
-                exec('from ' + arg + ' import ObdMessage', globals())
-                emulator.ObdMessage.update(ObdMessage)
-                print("ObdMessage successfully imported and merged. "
-                      "Available scenarios:")
+                module = importlib.import_module(arg)
+                emulator.ObdMessage.update(module.ObdMessage)
+                print("ObdMessage successfully imported and merged. Available scenarios:")
                 print("%s" % ', '.join([sc for sc in emulator.ObdMessage]))
             except Exception as e:
                 print("Error merging '%s': %s." % (arg, e))
         else:
-             if arg:
+            if arg:
                 print("Import error: invalid scenario '%s'." % arg)
-             else:
+            else:
                 print("Import error: missing scenario.")
 
     def do_engineoff(self, arg):
-        "Switch to 'engineoff' scenario"
+        """
+        Switch to 'engineoff' scenario
+        """
         if arg:
-            print ("Invalid format")
+            print("Invalid format")
             return
-        self.emulator.scenario='engineoff'
+        self.emulator.scenario = 'engineoff'
         print("Emulator scenario switched to '%s'" % self.emulator.scenario)
 
     def do_default(self, arg):
-        "Reset to 'default' scenario"
+        """
+        Reset to 'default' scenario
+        """
         if arg:
-            print ("Invalid format")
+            print("Invalid format")
             return
-        self.emulator.scenario='default'
+        self.emulator.scenario = 'default'
         print("Emulator scenario reset to '%s'" % self.emulator.scenario)
 
     def do_history(self, arg):
-        "print the command history; if an argument is given, print the last\n"\
-        "n commands in the history; with argument 'clear', clears the history"
+        """
+        print the command history; if an argument is given, print the last\n
+        n commands in the history; with argument 'clear', clears the history
+        """
         if arg == "clear":
             readline.clear_history()
             return
         try:
             n = 20 if len(arg) == 0 else int(arg.split()[0])
         except ValueError:
-            print ("Invalid format")
+            print("Invalid format")
             return
-        num=readline.get_current_history_length() - n
+        num = readline.get_current_history_length() - n
         for i in range(num if num > 0 else 0,
                        readline.get_current_history_length()):
-            print (readline.get_history_item(i + 1))
+            print(readline.get_history_item(i + 1))
 
     def is_matched(self, expression):
         opening = tuple('({[')
@@ -285,14 +314,14 @@ class Interpreter(Cmd):
     # completedefault and completenames manage autocompletion of Python
     # identifiers and namespaces
     def completedefault(self, text, line, begidx, endidx):
-        rld='.'.join(text.split('.')[:-1])
-        rlb=text.split('.')[-1]
-        if begidx > 0 and line[begidx-1] in ')]}' and line[begidx] == '.' and self.is_matched(line):
+        rld = '.'.join(text.split('.')[:-1])
+        rlb = text.split('.')[-1]
+        if begidx > 0 and line[begidx - 1] in ')]}' and line[begidx] == '.' and self.is_matched(line):
             rlds = line.rstrip('.' + rlb)
-            rl = [ rld + '.' + x for x in dir(eval(rlds))
-                if x.startswith(rlb) and not x.startswith('__')
-            ]
-            return(rl)
+            rl = [rld + '.' + x for x in dir(eval(rlds))
+                  if x.startswith(rlb) and not x.startswith('__')
+                  ]
+            return rl
         if rld:
             rl = [
                 rld + '.' + x for x in dir(eval(rld))
@@ -303,9 +332,9 @@ class Interpreter(Cmd):
         return rl + [self.rlc(text, x) for x in range(400) if self.rlc(text, x)]
 
     def completenames(self, text, *ignored):
-        dotext = 'do_'+text
-        rld='.'.join(text.split('.')[:-1])
-        rlb=text.split('.')[-1]
+        dotext = 'do_' + text
+        rld = '.'.join(text.split('.')[:-1])
+        rlb = text.split('.')[-1]
         if rld:
             rl = [
                 rld + '.' + x for x in dir(eval(rld))
@@ -336,7 +365,7 @@ class Interpreter(Cmd):
     # Execution of unrecognized commands
     def default(self, arg):
         try:
-            print ( eval(arg) )
+            print(eval(arg))
         except Exception:
             try:
                 exec(arg, globals())
@@ -353,20 +382,19 @@ if __name__ == '__main__':
         "-b", "--batch",
         dest="batch_mode",
         type=argparse.FileType('w'),
-        help="Run ELM327-emulator in batch mode. "
-             "Argument is the output file. "
+        help="Run ELM327-emulator in batch mode. Argument is the output file. "
              "The first line in that file will be the virtual serial device",
         default=0,
         nargs=1,
         metavar='FILE')
     parser.add_argument(
         '-p', '--port',
-        dest = 'serial_port',
-        help = "Set the com0com serial port listened by ELM327-emulator "
-               "when running under windows OS. Default is COM3.",
-        default = ['COM3'],
-        nargs = 1,
-        metavar = 'PORT'
+        dest='serial_port',
+        help="Set the com0com serial port listened by ELM327-emulator "
+             "when running under windows OS. Default is COM3.",
+        default=['COM3'],
+        nargs=1,
+        metavar='PORT'
     )
     args = parser.parse_args()
 
@@ -378,9 +406,9 @@ if __name__ == '__main__':
     try:
         emulator = ELM(args.batch_mode, args.serial_port[0])
         with emulator as pts_name:
-            if pts_name == None:
+            if pts_name is None:
                 print("\nCannot start ELM327-emulator.")
-                os._exit(1) # does not raise SystemExit
+                os._exit(1)  # does not raise SystemExit
             if args.batch_mode:
                 print(pts_name)
             while emulator.threadState == THREAD.STARTING:

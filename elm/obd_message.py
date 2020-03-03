@@ -36,7 +36,7 @@ ELM327_PROTO_STR = ['Automatic',
 # PID Dictionary
 ObdMessage = {
     # AT Commands
-    'AT' : {
+    'AT': {
         'AT_DESCR': {
             'Request': '^AT@1' + ELM_MAX_RESP,
             'Descr': 'Device description',
@@ -58,18 +58,16 @@ ObdMessage = {
             'Request': '^ATDP' + ELM_MAX_RESP,
             'Descr': 'set DESCRIBE_PROTO',
             'Exec': 'time.sleep(0.1)',
-            'ResponseHeader': \
-            lambda self, cmd, pid, val: \
-                ELM327_PROTO_STR[int(self.counters["cmd_proto"])] if 'cmd_proto' in self.counters \
-                    else "ISO 15765-4 CAN (11 bit ID, 500k baud)",
+            'ResponseHeader': lambda self, cmd, pid, val:
+                ELM327_PROTO_STR[int(self.counters["cmd_proto"])] if 'cmd_proto' in self.counters
+                else "ISO 15765-4 CAN (11 bit ID, 500k baud)",
             'Response': "\r"
         },
         'AT_DESCRIBE_PROTO_N': {
             'Request': '^ATDPN$',
             'Descr': 'set DESCRIBE_PROTO_N',
             'Exec': 'time.sleep(0.1)',
-            'ResponseHeader': \
-            lambda self, cmd, pid, val: \
+            'ResponseHeader': lambda self, cmd, pid, val:
                 self.counters["cmd_proto"] if 'cmd_proto' in self.counters else "6",
             'Response': "\r"
         },
@@ -107,10 +105,8 @@ ObdMessage = {
         'AT_R_VOLT': {
             'Request': '^ATRV$',
             'Descr': 'AT read volt',
-            'Log':
-            '"Volt = {:.1f}".format(0.1 * abs(9 - (self.counters[pid] + 9) % 18) + 13)',
-            'ResponseHeader': \
-            lambda self, cmd, pid, val: \
+            'Log': '"Volt = {:.1f}".format(0.1 * abs(9 - (self.counters[pid] + 9) % 18) + 13)',
+            'ResponseHeader': lambda self, cmd, pid, val:
                 "{:.1f}".format(0.1 * abs(9 - (self.counters[pid] + 9) % 18) + 13),
             'Response': "V\r"
         },
@@ -169,24 +165,20 @@ ObdMessage = {
         },
     },
     # OBD Commands
-    'engineoff' : {
+    'engineoff': {
         'ELM_PIDS_A': {
             'Request': '^0100$',
             'Descr': 'PIDS_A',
-            'ResponseHeader': \
-            lambda self, cmd, pid, val: \
-                'SEARCHING...\0 time.sleep(4.5) \0\rUNABLE TO CONNECT\r' \
-                if self.counters[pid] == 1 else 'NO DATA\r',
+            'ResponseHeader': lambda self, cmd, pid, val:
+                'SEARCHING...\0 time.sleep(4.5) \0\rUNABLE TO CONNECT\r' if self.counters[pid] == 1 else 'NO DATA\r',
             'Response': '',
             'Priority': 5
         },
         'ELM_MIDS_A': {
             'Request': '^0600$',
             'Descr': 'MIDS_A',
-            'ResponseHeader': \
-            lambda self, cmd, pid, val: \
-                'SEARCHING...\0 time.sleep(4.5) \0\rUNABLE TO CONNECT\r' \
-                if self.counters[pid] == 1 else 'NO DATA\r',
+            'ResponseHeader': lambda self, cmd, pid, val:
+                'SEARCHING...\0 time.sleep(4.5) \0\rUNABLE TO CONNECT\r' if self.counters[pid] == 1 else 'NO DATA\r',
             'Response': '',
             'Priority': 5
         },
@@ -203,7 +195,7 @@ ObdMessage = {
             'Priority': 6
         },
     },
-    'default' : {
+    'default': {
         'STATUS': {
             'Request': '^0101' + ELM_MAX_RESP,
             'Descr': 'Status since DTCs cleared',
@@ -252,26 +244,18 @@ ObdMessage = {
             'Descr': 'Engine RPM',
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': '',
-            'ResponseFooter': \
-            lambda self, cmd, pid, val: \
-                ECU_R_ADDR_E + ' 04 41 0C ' \
-                + self.Sequence(pid, base=2400, max=200, factor=80, n_bytes=2) \
-                + ' \r' + ECU_R_ADDR_H + ' 04 41 0C ' \
-                + self.Sequence(pid, base=2400, max=200, factor=80, n_bytes=2) \
-                + ' \r'
+            'ResponseFooter': lambda self, cmd, pid, val:
+                ECU_R_ADDR_E + ' 04 41 0C ' + self.sequence(pid, base=2400, max_=200, factor=80, n_bytes=2) + ' \r'
+                + ECU_R_ADDR_H + ' 04 41 0C ' + self.sequence(pid, base=2400, max_=200, factor=80, n_bytes=2) + ' \r'
         },
         'SPEED': {
             'Request': '^010D' + ELM_MAX_RESP,
             'Descr': 'Vehicle Speed',
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': '',
-            'ResponseFooter': \
-            lambda self, cmd, pid, val: \
-                ECU_R_ADDR_E + ' 03 41 0D ' \
-                + self.Sequence(pid, base=0, max=30, factor=4, n_bytes=1) \
-                + ' \r' + ECU_R_ADDR_H + ' 03 41 0D ' \
-                + self.Sequence(pid, base=0, max=30, factor=4, n_bytes=1) \
-                + ' \r'
+            'ResponseFooter': lambda self, cmd, pid, val:
+                ECU_R_ADDR_E + ' 03 41 0D ' + self.sequence(pid, base=0, max_=30, factor=4, n_bytes=1) + ' \r'
+                + ECU_R_ADDR_H + ' 03 41 0D ' + self.sequence(pid, base=0, max_=30, factor=4, n_bytes=1) + ' \r'
         },
         'INTAKE_TEMP': {
             'Request': '^010F' + ELM_MAX_RESP,
@@ -296,8 +280,8 @@ ObdMessage = {
             'Descr': 'OBD Standards Compliance',
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
-            ECU_R_ADDR_H + ' 03 41 1C 06 \r' +
-            ECU_R_ADDR_E + ' 03 41 1C 29 \r'
+                ECU_R_ADDR_H + ' 03 41 1C 06 \r' +
+                ECU_R_ADDR_E + ' 03 41 1C 29 \r'
         },
         # 'OBD_COMPLIANCE': {
         #     'Request': '^011C' + ELM_MAX_RESP,
@@ -425,17 +409,17 @@ ObdMessage = {
             'Descr': 'PIDS_A',
             # 'ResponseHeader': \
             # lambda self, cmd, pid, val: \
-                # 'SEARCHING...\0 time.sleep(3) \0\r' if self.counters[pid] == 1 else "",
+            # 'SEARCHING...\0 time.sleep(3) \0\r' if self.counters[pid] == 1 else "",
             'Response':
-            ECU_R_ADDR_H + ' 06 41 00 98 3A 80 13 \r' +
-            ECU_R_ADDR_E + ' 06 41 00 BE 3F A8 13 \r'
+                ECU_R_ADDR_H + ' 06 41 00 98 3A 80 13 \r' +
+                ECU_R_ADDR_E + ' 06 41 00 BE 3F A8 13 \r'
         },
         'ELM_PIDS_B': {
             'Request': '^0120' + ELM_MAX_RESP,
             'Descr': 'PIDS_B',
             'Response':
-            ECU_R_ADDR_H + ' 06 41 20 80 01 A0 00 \r' +
-            ECU_R_ADDR_E + ' 06 41 20 90 15 B0 15 \r'
+                ECU_R_ADDR_H + ' 06 41 20 80 01 A0 00 \r' +
+                ECU_R_ADDR_E + ' 06 41 20 90 15 B0 15 \r'
         },
         # 'ELM_PIDS_B': {
         #     'Request': '^0120' + ELM_MAX_RESP,
@@ -448,7 +432,7 @@ ObdMessage = {
             'Request': '^0140' + ELM_MAX_RESP,
             'Descr': 'PIDS_C',
             'Response':
-            ECU_R_ADDR_E + ' 06 41 40 7A 1C 80 00 \r'
+                ECU_R_ADDR_E + ' 06 41 40 7A 1C 80 00 \r'
         },
         # 'ELM_PIDS_C': {
         #     'Request': '^0140' + ELM_MAX_RESP,
@@ -467,30 +451,41 @@ ObdMessage = {
             'Request': '^03' + ELM_MAX_RESP,
             'Descr': 'Confirmed DTC',
             'Response':
-            ECU_R_ADDR_H + ' 02 43 00 \r' +
-            ECU_R_ADDR_E + ' 02 43 00 \r'
+                ECU_R_ADDR_H + ' 02 43 00 \r' +
+                ECU_R_ADDR_E + ' 02 43 00 \r'
         },
         'PENDING_DTC': {
             'Request': '^07' + ELM_MAX_RESP,
             'Descr': 'Pending DTC',
             'Response':
-            ECU_R_ADDR_H + ' 02 47 00 \r' +
-            ECU_R_ADDR_E + ' 02 47 00 \r'
+                ECU_R_ADDR_H + ' 02 47 00 \r' +
+                ECU_R_ADDR_E + ' 02 47 00 \r'
         },
-        # 'PENDING_DTC': {
-        #     'Request': '^07' + ELM_MAX_RESP,
-        #     'Descr': 'Pending DTC',
-        #     'Response':
-        #     ECU_R_ADDR_H + ' 02 47 02 00 10 00 20 \r' +
-        #     ECU_R_ADDR_E + ' 02 47 00 \r'
-        # },
+        'PENDING_DTC': {
+            'Request': '^07' + ELM_MAX_RESP,
+            'Descr': 'Pending DTC',
+            'Response':
+                ECU_R_ADDR_H + ' 10 28 47 0E 00 10 00 11 \r' +
+                ECU_R_ADDR_H + ' 21 00 12 00 13 00 14 00 \r' +
+                ECU_R_ADDR_H + ' 22 15 00 16 00 17 00 18 \r' +
+                ECU_R_ADDR_H + ' 23 00 19 00 1A 00 1B 00 \r' +
+                ECU_R_ADDR_H + ' 24 1C 00 1D 00 1E 00 1F \r' +
+                ECU_R_ADDR_H + ' 25 00 20 00 21 00 22 \r' +
+                ECU_R_ADDR_E + ' 02 47 00 \r'
+        },
         'PERMANENT_DTC': {
             'Request': '^0A' + ELM_MAX_RESP,
             'Descr': 'Permanent DTC',
             'Response':
-            ECU_R_ADDR_H + ' 02 4A 00 \r' +
-            ECU_R_ADDR_E + ' 02 4A 00 \r'
+                ECU_R_ADDR_H + ' 02 4A 00 \r' +
+                ECU_R_ADDR_E + ' 02 4A 00 \r'
         },
+        # 'PERMANENT_DTC': {
+        #     'Request': '^0A' + ELM_MAX_RESP,
+        #     'Descr': 'Permanent DTC',
+        #     'Response':
+        #     ECU_R_ADDR_H + ' 03 7F 08 11 \r'
+        # },
         'ELM_MIDS_A': {
             'Request': '^0600' + ELM_MAX_RESP,
             'Descr': 'MIDS_A',
@@ -526,56 +521,69 @@ ObdMessage = {
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Descr': 'PIDS_9A',
             'Response':
-            ECU_R_ADDR_H + ' 06 49 00 14 00 00 00 \r' +
-            ECU_R_ADDR_E + ' 06 49 00 FF DF 00 00 \r'
+                ECU_R_ADDR_H + ' 06 49 00 14 00 00 00 \r' +
+                ECU_R_ADDR_E + ' 06 49 00 FF DF 00 00 \r'
         },
         'VIN_MESSAGE_COUNT': {
             'Request': '^0901' + ELM_MAX_RESP,
             'Descr': 'VIN Message Count',
             'Response': ECU_R_ADDR_E + ' 03 49 01 05 \r'
         },
-        'VIN': { # Check this also: https://stackoverflow.com/a/26752855/10598800, https://www.autocheck.com/vehiclehistory/autocheck/en/vinbasics
-            'Request': '^0902' + ELM_MAX_RESP,
-            'Descr': 'Get Vehicle Identification Number',
-            'Response': [
-                        ECU_R_ADDR_E + ' 10 14 49 02 01 57 50 30 \r' +
-                        ECU_R_ADDR_E + ' 21 5A 5A 5A 39 39 5A 54 \r' +
-                        ECU_R_ADDR_E + ' 22 53 33 39 30 30 30 36 \r', # https://www.autodna.com/vin/WP0ZZZ99ZTS390000, https://it.vin-info.com/libro-denuncia/WP0ZZZ99ZTS390000
-                        ECU_R_ADDR_E + ' 10 14 49 02 01 4D 41 54 \r' + # https://community.carloop.io/t/how-to-request-vin/153/11
-                        ECU_R_ADDR_E + ' 21 34 30 33 30 39 36 42 \r' +
-                        ECU_R_ADDR_E + ' 22 4E 4C 30 30 30 30 38 \r'
-                        ]
-        },
-        # 'VIN': { # Check this also: https://stackoverflow.com/a/26752855/10598800, https://www.autocheck.com/vehiclehistory/autocheck/en/vinbasics
+        # Check this also: https://stackoverflow.com/a/26752855/10598800
+        # https://www.autocheck.com/vehiclehistory/autocheck/en/vinbasics
+        # 'VIN': {
         #     'Request': '^0902' + ELM_MAX_RESP,
         #     'Descr': 'Get Vehicle Identification Number',
-        #     'Response':
-        #     ECU_R_ADDR_E + ' 03 7F 09 78 \r' +
-        #     ECU_R_ADDR_E + ' 10 14 49 02 01 57 50 30 \r' +
-        #     ECU_R_ADDR_E + ' 21 5A 5A 5A 39 39 5A 54 \r' +
-        #     ECU_R_ADDR_E + ' 22 53 33 39 30 30 30 36 \r'
+        #     'Response': [
+        # https://www.autodna.com/vin/WP0ZZZ99ZTS390000
+        # https://it.vin-info.com/libro-denuncia/WP0ZZZ99ZTS390000
+        #                 ECU_R_ADDR_E + ' 10 14 49 02 01 57 50 30 \r' +
+        #                 ECU_R_ADDR_E + ' 21 5A 5A 5A 39 39 5A 54 \r' +
+        #                 ECU_R_ADDR_E + ' 22 53 33 39 30 30 30 30 \r',
+        # https://community.carloop.io/t/how-to-request-vin/153/11
+        #                 ECU_R_ADDR_E + ' 10 14 49 02 01 4D 41 54 \r' +
+        #                 ECU_R_ADDR_E + ' 21 34 30 33 30 39 36 42 \r' +
+        #                 ECU_R_ADDR_E + ' 22 4E 4C 30 30 30 30 30 \r'
+        #                 ]
         # },
+        'VIN': {
+            'Request': '^0902' + ELM_MAX_RESP,
+            'Descr': 'Get Vehicle Identification Number',
+            'Response':
+                ECU_R_ADDR_E + ' 03 7F 09 78 \r' +
+                ECU_R_ADDR_E + ' 10 14 49 02 01 57 50 30 \r' +
+                ECU_R_ADDR_E + ' 21 5A 5A 5A 39 39 5A 54 \r' +
+                ECU_R_ADDR_E + ' 22 53 33 39 30 30 30 36 \r'
+        },
         'CALIBRATION_ID_MESSAGE_COUNT': {
             'Request': '^0903' + ELM_MAX_RESP,
             'Descr': 'Calibration ID message count for PID 04',
             'Response':
-            ECU_R_ADDR_H + ' 03 49 03 04 \r' +
-            ECU_R_ADDR_E + ' 03 49 03 08 \r'
+                ECU_R_ADDR_H + ' 03 49 03 04 \r' +
+                ECU_R_ADDR_E + ' 03 49 03 08 \r'
         },
         'CALIBRATION_ID': {
             'Request': '^0904' + ELM_MAX_RESP,
             'Descr': 'Get Calibration ID',
             'Response':
-            ECU_R_ADDR_H + ' 10 13 49 04 01 4A 4D 41 \r' +
-            ECU_R_ADDR_H + ' 21 2A 34 33 31 32 39 39 \r' +
-            ECU_R_ADDR_H + ' 22 31 31 30 30 30 30 \r' +
-            ECU_R_ADDR_E + ' 10 23 49 04 02 4C 4B 32 \r' +
-            ECU_R_ADDR_E + ' 21 31 2D 31 34 43 32 30 \r' +
-            ECU_R_ADDR_E + ' 22 34 2D 44 42 00 00 4B \r' +
-            ECU_R_ADDR_E + ' 23 56 36 41 2D 31 34 47 \r' +
-            ECU_R_ADDR_E + ' 24 32 35 30 2D 43 43 00 \r' +
-            ECU_R_ADDR_E + ' 25 00 \r'
+                ECU_R_ADDR_H + ' 10 13 49 04 01 4A 4D 41 \r' +
+                ECU_R_ADDR_H + ' 21 2A 34 33 31 32 39 39 \r' +
+                ECU_R_ADDR_H + ' 22 31 31 30 30 30 30 \r' +
+                ECU_R_ADDR_E + ' 10 23 49 04 02 4C 4B 32 \r' +
+                ECU_R_ADDR_E + ' 21 31 2D 31 34 43 32 30 \r' +
+                ECU_R_ADDR_E + ' 22 34 2D 44 42 00 00 4B \r' +
+                ECU_R_ADDR_E + ' 23 56 36 41 2D 31 34 47 \r' +
+                ECU_R_ADDR_E + ' 24 32 35 30 2D 43 43 00 \r' +
+                ECU_R_ADDR_E + ' 25 00 \r'
         },
+        # 'CALIBRATION_ID': {
+        #     'Request': '^0904' + ELM_MAX_RESP,
+        #     'Descr': 'Get Calibration ID',
+        #     'Response':
+        #     '7EE 10 13 49 04 01 56 34 34 \r' +
+        #     '7EE 21 44 36 35 30 30 32 34 \r' +
+        #     '7EE 22 31 32 32 54 33 33 \r'
+        # },
         # 'CALIBRATION_ID': {
         #     'Request': '^0904' + ELM_MAX_RESP,
         #     'Descr': 'Get Calibration ID',
@@ -602,16 +610,16 @@ ObdMessage = {
             'Request': '^0905' + ELM_MAX_RESP,
             'Descr': 'Calibration Verification Numbers message count for PID 06',
             'Response':
-            ECU_R_ADDR_H + ' 03 49 05 01 \r' +
-            ECU_R_ADDR_E + ' 03 49 05 02 \r'
+                ECU_R_ADDR_H + ' 03 49 05 01 \r' +
+                ECU_R_ADDR_E + ' 03 49 05 02 \r'
         },
         'CVN': {
             'Request': '^0906' + ELM_MAX_RESP,
             'Descr': 'Get Calibration Verification Numbers',
             'Response':
-            ECU_R_ADDR_H + ' 07 49 06 01 98 12 34 76 \r' +
-            ECU_R_ADDR_E + ' 10 0B 49 06 02 42 32 42 \r' +
-            ECU_R_ADDR_E + ' 21 41 33 45 36 46 \r'
+                ECU_R_ADDR_H + ' 07 49 06 01 98 12 34 76 \r' +
+                ECU_R_ADDR_E + ' 10 0B 49 06 02 42 32 42 \r' +
+                ECU_R_ADDR_E + ' 21 41 33 45 36 46 \r'
         },
         # 'CVN': {
         #     'Request': '^0906' + ELM_MAX_RESP,
@@ -620,15 +628,16 @@ ObdMessage = {
         #     ECU_R_ADDR_H + ' 07 49 06 01 98 12 34 76 \r' +
         #     ECU_R_ADDR_E + ' 07 49 06 01 33 45 36 46 \r'
         # },
-        # 'CVN': {
-        #     'Request': '^0906' + ELM_MAX_RESP,
-        #     'Descr': 'Get Calibration Verification Numbers',
-        #     'Response':
-        #     ECU_R_ADDR_E + ' 03 7F 09 78 \r\r>\0 time.sleep(5) \0' +
-        #     ECU_R_ADDR_H + ' 07 49 06 01 98 12 34 76 \r' +
-        #     ECU_R_ADDR_E + ' 10 0B 49 06 02 42 32 42 \r' +
-        #     ECU_R_ADDR_E + ' 21 41 33 45 36 46 \r'
-        # },
+        'CVN': {
+            'Request': '^0906' + ELM_MAX_RESP,
+            'Descr': 'Get Calibration Verification Numbers',
+            'Response':
+                ECU_R_ADDR_E + ' 03 7F 09 78 \r\r>\0 time.sleep(5) \0' +
+                ECU_R_ADDR_E + ' 03 7F 09 78 \r\r>\0 time.sleep(5) \0' +
+                ECU_R_ADDR_H + ' 07 49 06 01 98 12 34 76 \r' +
+                ECU_R_ADDR_E + ' 10 0B 49 06 02 42 32 42 \r' +
+                ECU_R_ADDR_E + ' 21 41 33 45 36 46 \r'
+        },
         # 'CVN': {
         #     'Request': '^0906' + ELM_MAX_RESP,
         #     'Descr': 'Get Calibration Verification Numbers',
@@ -651,12 +660,12 @@ ObdMessage = {
             'Request': '^0908' + ELM_MAX_RESP,
             'Descr': 'Get In-use Performance Tracking for spark ignition vehicles',
             'Response':
-            ECU_R_ADDR_E + ' 10 23 49 08 10 04 00 0D \r' +
-            ECU_R_ADDR_E + ' 21 09 03 38 03 B1 02 C7 \r' +
-            ECU_R_ADDR_E + ' 22 03 B1 02 E1 03 9C 02 \r' +
-            ECU_R_ADDR_E + ' 23 D4 03 41 03 E5 03 F2 \r' +
-            ECU_R_ADDR_E + ' 24 03 A9 03 CD 00 44 00 \r' +
-            ECU_R_ADDR_E + ' 25 61 \r'
+                ECU_R_ADDR_E + ' 10 23 49 08 10 04 00 0D \r' +
+                ECU_R_ADDR_E + ' 21 09 03 38 03 B1 02 C7 \r' +
+                ECU_R_ADDR_E + ' 22 03 B1 02 E1 03 9C 02 \r' +
+                ECU_R_ADDR_E + ' 23 D4 03 41 03 E5 03 F2 \r' +
+                ECU_R_ADDR_E + ' 24 03 A9 03 CD 00 44 00 \r' +
+                ECU_R_ADDR_E + ' 25 61 \r'
         },
         'ECUNAME_MESSAGE_COUNT': {
             'Request': '^0909' + ELM_MAX_RESP,
@@ -667,25 +676,25 @@ ObdMessage = {
             'Request': '^090A' + ELM_MAX_RESP,
             'Descr': 'Get ECU’s/module’s acronym and text name',
             'Response':
-            ECU_R_ADDR_H + ' 10 17 49 0A 01 48 56 41 \r' +
-            ECU_R_ADDR_H + ' 21 43 2D 48 56 41 43 43 \r' +
-            ECU_R_ADDR_H + ' 22 74 72 6C 00 00 00 00 \r' +
-            ECU_R_ADDR_H + ' 23 00 00 00 \r' +
-            ECU_R_ADDR_E + ' 10 17 49 0A 01 45 43 4D \r' +
-            ECU_R_ADDR_E + ' 21 00 2D 45 6E 67 69 6E \r' +
-            ECU_R_ADDR_E + ' 22 65 20 43 6F 6E 74 72 \r' +
-            ECU_R_ADDR_E + ' 23 6F 6C 00 \r'
+                ECU_R_ADDR_H + ' 10 17 49 0A 01 48 56 41 \r' +
+                ECU_R_ADDR_H + ' 21 43 2D 48 56 41 43 43 \r' +
+                ECU_R_ADDR_H + ' 22 74 72 6C 00 00 00 00 \r' +
+                ECU_R_ADDR_H + ' 23 00 00 00 \r' +
+                ECU_R_ADDR_E + ' 10 17 49 0A 01 45 43 4D \r' +
+                ECU_R_ADDR_E + ' 21 00 2D 45 6E 67 69 6E \r' +
+                ECU_R_ADDR_E + ' 22 65 20 43 6F 6E 74 72 \r' +
+                ECU_R_ADDR_E + ' 23 6F 6C 00 \r'
         },
         'IPT_COMPRESSION_IGNITION': {
             'Request': '^090B' + ELM_MAX_RESP,
             'Descr': 'Get In-use Performance Tracking for compression ignition vehicles',
             'Response':
-            ECU_R_ADDR_E + ' 10 23 49 08 10 04 00 0D \r' +
-            ECU_R_ADDR_E + ' 21 09 03 38 03 B1 02 C7 \r' +
-            ECU_R_ADDR_E + ' 22 03 B1 02 E1 03 9C 02 \r' +
-            ECU_R_ADDR_E + ' 23 D4 03 41 03 E5 03 F2 \r' +
-            ECU_R_ADDR_E + ' 24 03 A9 03 CD 00 44 00 \r' +
-            ECU_R_ADDR_E + ' 25 61 \r'
+                ECU_R_ADDR_E + ' 10 23 49 08 10 04 00 0D \r' +
+                ECU_R_ADDR_E + ' 21 09 03 38 03 B1 02 C7 \r' +
+                ECU_R_ADDR_E + ' 22 03 B1 02 E1 03 9C 02 \r' +
+                ECU_R_ADDR_E + ' 23 D4 03 41 03 E5 03 F2 \r' +
+                ECU_R_ADDR_E + ' 24 03 A9 03 CD 00 44 00 \r' +
+                ECU_R_ADDR_E + ' 25 61 \r'
         },
         'ESN_MESSAGE_COUNT': {
             'Request': '^090C' + ELM_MAX_RESP,
@@ -696,9 +705,9 @@ ObdMessage = {
             'Request': '^090D' + ELM_MAX_RESP,
             'Descr': 'Get Engine Serial Number',
             'Response':
-            ECU_R_ADDR_E + ' 10 14 49 0D 01 00 00 00 \r' +
-            ECU_R_ADDR_E + ' 21 00 42 52 41 4E 44 20 \r' +
-            ECU_R_ADDR_E + ' 22 33 32 31 37 34 38 36 \r'
+                ECU_R_ADDR_E + ' 10 14 49 0D 01 00 00 00 \r' +
+                ECU_R_ADDR_E + ' 21 00 42 52 41 4E 44 20 \r' +
+                ECU_R_ADDR_E + ' 22 33 32 31 37 34 38 36 \r'
         },
         'EROTAN_MESSAGE_COUNT': {
             'Request': '^090E' + ELM_MAX_RESP,
@@ -709,9 +718,9 @@ ObdMessage = {
             'Request': '^090F' + ELM_MAX_RESP,
             'Descr': 'Get Exhaust Regulation Or Type Approval Number',
             'Response':
-            ECU_R_ADDR_E + ' 10 14 49 0D 01 00 00 00 \r' +
-            ECU_R_ADDR_E + ' 21 00 44 4F 43 2D 43 52 \r' +
-            ECU_R_ADDR_E + ' 22 2D 39 33 34 35 36 37 \r'
+                ECU_R_ADDR_E + ' 10 14 49 0D 01 00 00 00 \r' +
+                ECU_R_ADDR_E + ' 21 00 44 4F 43 2D 43 52 \r' +
+                ECU_R_ADDR_E + ' 22 2D 39 33 34 35 36 37 \r'
         }
     },
     'ISO14230': {
@@ -774,20 +783,20 @@ ObdMessage = {
             'Request': '^0902' + ELM_MAX_RESP,
             'Descr': 'Get Vehicle Identification Number',
             'Response':
-            '87 F1 11 49 02 01 00 00 00 4C 21 \r' +
-            '87 F1 11 49 02 02 4A 58 42 4D 07 \r' +
-            '87 F1 11 49 02 03 46 48 43 33 DB \r' +
-            '87 F1 11 49 02 04 4B 54 31 30 D8 \r' +
-            '87 F1 11 49 02 05 34 33 37 31 A8 \r'
+                '87 F1 11 49 02 01 00 00 00 4C 21 \r' +
+                '87 F1 11 49 02 02 4A 58 42 4D 07 \r' +
+                '87 F1 11 49 02 03 46 48 43 33 DB \r' +
+                '87 F1 11 49 02 04 4B 54 31 30 D8 \r' +
+                '87 F1 11 49 02 05 34 33 37 31 A8 \r'
         },
         'CALIBRATION_ID': {
             'Request': '^0904' + ELM_MAX_RESP,
             'Descr': 'Get Calibration ID',
             'Response':
-            '87 F1 11 49 04 01 32 38 35 37 AD \r' +
-            '87 F1 11 49 04 02 37 33 38 39 B3 \r' +
-            '87 F1 11 49 04 03 00 00 00 00 D9 \r' +
-            '87 F1 11 49 04 04 00 00 00 00 DA \r'
+                '87 F1 11 49 04 01 32 38 35 37 AD \r' +
+                '87 F1 11 49 04 02 37 33 38 39 B3 \r' +
+                '87 F1 11 49 04 03 00 00 00 00 D9 \r' +
+                '87 F1 11 49 04 04 00 00 00 00 DA \r'
         },
         'CVN': {
             'Request': '^0906' + ELM_MAX_RESP,
@@ -846,21 +855,21 @@ ObdMessage = {
             'Descr': 'Get Vehicle Identification Number',
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
-            ECU_R_ADDR_E + ' 10 14 62 F8 02 4C 4A 58 \r' +
-            ECU_R_ADDR_E + ' 21 43 4C 44 44 42 35 4B \r' +
-            ECU_R_ADDR_E + ' 22 54 56 31 36 33 34 37 \r'
+                ECU_R_ADDR_E + ' 10 14 62 F8 02 4C 4A 58 \r' +
+                ECU_R_ADDR_E + ' 21 43 4C 44 44 42 35 4B \r' +
+                ECU_R_ADDR_E + ' 22 54 56 31 36 33 34 37 \r'
         },
         'F804': {
             'Request': '^22F804' + ELM_MAX_RESP,
             'Descr': 'Get Calibration ID',
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
-            ECU_R_ADDR_E + ' 10 23 62 F8 04 4C 4B 32 \r' +
-            ECU_R_ADDR_E + ' 21 31 2D 31 34 43 32 30 \r' +
-            ECU_R_ADDR_E + ' 22 34 2D 44 44 00 00 4B \r' +
-            ECU_R_ADDR_E + ' 23 56 36 41 2D 31 34 47 \r' +
-            ECU_R_ADDR_E + ' 24 32 35 30 2D 43 45 00 \r' +
-            ECU_R_ADDR_E + ' 25 00 00 00 00 00 00 00 \r'
+                ECU_R_ADDR_E + ' 10 23 62 F8 04 4C 4B 32 \r' +
+                ECU_R_ADDR_E + ' 21 31 2D 31 34 43 32 30 \r' +
+                ECU_R_ADDR_E + ' 22 34 2D 44 44 00 00 4B \r' +
+                ECU_R_ADDR_E + ' 23 56 36 41 2D 31 34 47 \r' +
+                ECU_R_ADDR_E + ' 24 32 35 30 2D 43 45 00 \r' +
+                ECU_R_ADDR_E + ' 25 00 00 00 00 00 00 00 \r'
         },
         # 'F804': {
         #     'Request': '^22F804' + ELM_MAX_RESP,
@@ -876,8 +885,8 @@ ObdMessage = {
             'Descr': 'Get CVN',
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
-            ECU_R_ADDR_E + ' 10 0B 62 F8 06 DC 41 EC \r' +
-            ECU_R_ADDR_E + ' 21 C0 92 9E D9 D2 00 00 \r'
+                ECU_R_ADDR_E + ' 10 0B 62 F8 06 DC 41 EC \r' +
+                ECU_R_ADDR_E + ' 21 C0 92 9E D9 D2 00 00 \r'
         },
         # 'F806': {
         #     'Request': '^22F806' + ELM_MAX_RESP,
@@ -891,30 +900,30 @@ ObdMessage = {
             'Descr': 'Get ECU’s/module’s acronym and text name',
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
-            ECU_R_ADDR_E + ' 10 17 62 F8 0A 45 43 4D \r' +
-            ECU_R_ADDR_E + ' 21 00 2D 45 6E 67 69 6E \r' +
-            ECU_R_ADDR_E + ' 22 65 43 6F 6E 74 72 6F \r' +
-            ECU_R_ADDR_E + ' 23 6C 00 00 00 00 00 00 \r'
+                ECU_R_ADDR_E + ' 10 17 62 F8 0A 45 43 4D \r' +
+                ECU_R_ADDR_E + ' 21 00 2D 45 6E 67 69 6E \r' +
+                ECU_R_ADDR_E + ' 22 65 43 6F 6E 74 72 6F \r' +
+                ECU_R_ADDR_E + ' 23 6C 00 00 00 00 00 00 \r'
         },
         'F80B': {
             'Request': '^22F80B' + ELM_MAX_RESP,
             'Descr': 'Get In-use Performance Tracking for compression ignition vehicles',
             'Response':
-            ECU_R_ADDR_E + ' 10 23 49 08 10 04 00 0D \r' +
-            ECU_R_ADDR_E + ' 21 09 03 38 03 B1 02 C7 \r' +
-            ECU_R_ADDR_E + ' 22 03 B1 02 E1 03 9C 02 \r' +
-            ECU_R_ADDR_E + ' 23 D4 03 41 03 E5 03 F2 \r' +
-            ECU_R_ADDR_E + ' 24 03 A9 03 CD 00 44 00 \r' +
-            ECU_R_ADDR_E + ' 25 61 \r'
+                ECU_R_ADDR_E + ' 10 23 49 08 10 04 00 0D \r' +
+                ECU_R_ADDR_E + ' 21 09 03 38 03 B1 02 C7 \r' +
+                ECU_R_ADDR_E + ' 22 03 B1 02 E1 03 9C 02 \r' +
+                ECU_R_ADDR_E + ' 23 D4 03 41 03 E5 03 F2 \r' +
+                ECU_R_ADDR_E + ' 24 03 A9 03 CD 00 44 00 \r' +
+                ECU_R_ADDR_E + ' 25 61 \r'
         },
         'F80D': {
             'Request': '^22F80D' + ELM_MAX_RESP,
             'Descr': 'Get Engine Serial Number',
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
-            ECU_R_ADDR_E + ' 10 14 62 F8 0D 3F 3F 3F \r' +
-            ECU_R_ADDR_E + ' 21 3F 3F 3F 3F 3F 3F 3F \r' +
-            ECU_R_ADDR_E + ' 22 3F 3F 3F 3F 3F 3F 3F \r'
+                ECU_R_ADDR_E + ' 10 14 62 F8 0D 3F 3F 3F \r' +
+                ECU_R_ADDR_E + ' 21 3F 3F 3F 3F 3F 3F 3F \r' +
+                ECU_R_ADDR_E + ' 22 3F 3F 3F 3F 3F 3F 3F \r'
         },
         'F810': {
             'Request': '^22F810' + ELM_MAX_RESP,
@@ -927,9 +936,9 @@ ObdMessage = {
             'Descr': 'Get WWH-OBD GTR Number',
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response':
-            ECU_R_ADDR_E + ' 10 0E 62 F8 11 47 54 52 \r' +
-            ECU_R_ADDR_E + ' 21 5F 30 30 35 2E 30 30 \r' +
-            ECU_R_ADDR_E + ' 22 30 \r'
+                ECU_R_ADDR_E + ' 10 0E 62 F8 11 47 54 52 \r' +
+                ECU_R_ADDR_E + ' 21 5F 30 30 35 2E 30 30 \r' +
+                ECU_R_ADDR_E + ' 22 30 \r'
         },
         'CONFIRMED_DTC': {
             'Request': '^194233081E' + ELM_MAX_RESP,
@@ -948,7 +957,7 @@ ObdMessage = {
             'Request': '^194233041E' + ELM_MAX_RESP,
             'Descr': 'Pending DTC',
             'Response':
-            ECU_R_ADDR_E + ' 06 59 42 33 04 1E 04 \r'
+                ECU_R_ADDR_E + ' 06 59 42 33 04 1E 04 \r'
         },
         # 'PENDING_DTC': {
         #     'Request': '^194233041E' + ELM_MAX_RESP,
@@ -980,10 +989,10 @@ ObdMessage = {
             'Request': '^00FEEC' + ELM_MAX_RESP,
             'Descr': 'Get Vehicle Identification Number',
             'Response':
-            '012 \r' +
-            '6 0EBFF 00 01 4C 45 46 59 45 44 4B \r' +
-            '6 0EBFF 00 02 35 32 4B 48 4E 38 32 \r' +
-            '6 0EBFF 00 03 31 33 30 2A FF FF FF \r'
+                '012 \r' +
+                '6 0EBFF 00 01 4C 45 46 59 45 44 4B \r' +
+                '6 0EBFF 00 02 35 32 4B 48 4E 38 32 \r' +
+                '6 0EBFF 00 03 31 33 30 2A FF FF FF \r'
         },
         # 'VIN': {
         #     'Request': '^00FEEC' + ELM_MAX_RESP,
@@ -995,13 +1004,13 @@ ObdMessage = {
             'Request': '^00D300' + ELM_MAX_RESP,
             'Descr': 'Get Calibration Information',
             'Response':
-            '028 \r\0 time.sleep(0.6) \0' +
-            '7 0EBFF 00 01 FF 12 75 15 4B 43 31 \r' +
-            '7 0EBFF 00 02 30 30 31 36 2E 30 30 \r' +
-            '7 0EBFF 00 03 00 00 00 00 00 00 8C \r' +
-            '7 0EBFF 00 04 4B F9 C9 4E 4F 78 2D \r' +
-            '7 0EBFF 00 05 53 41 45 31 34 61 20 \r' +
-            '7 0EBFF 00 06 41 54 4F 31 00 FF FF \r'
+                '028 \r\0 time.sleep(0.6) \0' +
+                '7 0EBFF 00 01 FF 12 75 15 4B 43 31 \r' +
+                '7 0EBFF 00 02 30 30 31 36 2E 30 30 \r' +
+                '7 0EBFF 00 03 00 00 00 00 00 00 8C \r' +
+                '7 0EBFF 00 04 4B F9 C9 4E 4F 78 2D \r' +
+                '7 0EBFF 00 05 53 41 45 31 34 61 20 \r' +
+                '7 0EBFF 00 06 41 54 4F 31 00 FF FF \r'
         },
     }
 }
