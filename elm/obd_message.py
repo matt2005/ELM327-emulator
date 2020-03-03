@@ -461,18 +461,18 @@ ObdMessage = {
                 ECU_R_ADDR_H + ' 02 47 00 \r' +
                 ECU_R_ADDR_E + ' 02 47 00 \r'
         },
-        'PENDING_DTC': {
-            'Request': '^07' + ELM_MAX_RESP,
-            'Descr': 'Pending DTC',
-            'Response':
-                ECU_R_ADDR_H + ' 10 28 47 0E 00 10 00 11 \r' +
-                ECU_R_ADDR_H + ' 21 00 12 00 13 00 14 00 \r' +
-                ECU_R_ADDR_H + ' 22 15 00 16 00 17 00 18 \r' +
-                ECU_R_ADDR_H + ' 23 00 19 00 1A 00 1B 00 \r' +
-                ECU_R_ADDR_H + ' 24 1C 00 1D 00 1E 00 1F \r' +
-                ECU_R_ADDR_H + ' 25 00 20 00 21 00 22 \r' +
-                ECU_R_ADDR_E + ' 02 47 00 \r'
-        },
+        # 'PENDING_DTC': {
+        #     'Request': '^07' + ELM_MAX_RESP,
+        #     'Descr': 'Pending DTC',
+        #     'Response':
+        #         ECU_R_ADDR_H + ' 10 28 47 0E 00 10 00 11 \r' +
+        #         ECU_R_ADDR_H + ' 21 00 12 00 13 00 14 00 \r' +
+        #         ECU_R_ADDR_H + ' 22 15 00 16 00 17 00 18 \r' +
+        #         ECU_R_ADDR_H + ' 23 00 19 00 1A 00 1B 00 \r' +
+        #         ECU_R_ADDR_H + ' 24 1C 00 1D 00 1E 00 1F \r' +
+        #         ECU_R_ADDR_H + ' 25 00 20 00 21 00 22 \r' +
+        #         ECU_R_ADDR_E + ' 02 47 00 \r'
+        # },
         'PERMANENT_DTC': {
             'Request': '^0A' + ELM_MAX_RESP,
             'Descr': 'Permanent DTC',
@@ -628,16 +628,16 @@ ObdMessage = {
         #     ECU_R_ADDR_H + ' 07 49 06 01 98 12 34 76 \r' +
         #     ECU_R_ADDR_E + ' 07 49 06 01 33 45 36 46 \r'
         # },
-        'CVN': {
-            'Request': '^0906' + ELM_MAX_RESP,
-            'Descr': 'Get Calibration Verification Numbers',
-            'Response':
-                ECU_R_ADDR_E + ' 03 7F 09 78 \r\r>\0 time.sleep(5) \0' +
-                ECU_R_ADDR_E + ' 03 7F 09 78 \r\r>\0 time.sleep(5) \0' +
-                ECU_R_ADDR_H + ' 07 49 06 01 98 12 34 76 \r' +
-                ECU_R_ADDR_E + ' 10 0B 49 06 02 42 32 42 \r' +
-                ECU_R_ADDR_E + ' 21 41 33 45 36 46 \r'
-        },
+        # 'CVN': {
+        #     'Request': '^0906' + ELM_MAX_RESP,
+        #     'Descr': 'Get Calibration Verification Numbers',
+        #     'Response':
+        #         ECU_R_ADDR_E + ' 03 7F 09 78 \r\r>\0 time.sleep(5) \0' +
+        #         ECU_R_ADDR_E + ' 03 7F 09 78 \r\r>\0 time.sleep(5) \0' +
+        #         ECU_R_ADDR_H + ' 07 49 06 01 98 12 34 76 \r' +
+        #         ECU_R_ADDR_E + ' 10 0B 49 06 02 42 32 42 \r' +
+        #         ECU_R_ADDR_E + ' 21 41 33 45 36 46 \r'
+        # },
         # 'CVN': {
         #     'Request': '^0906' + ELM_MAX_RESP,
         #     'Descr': 'Get Calibration Verification Numbers',
