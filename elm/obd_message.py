@@ -403,10 +403,16 @@ ObdMessage = {
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 04 41 5D 66 00 \r'
         },
+        'ODO': {
+            'Request': '^01A6' + ELM_MAX_RESP,
+            'Descr': 'Vehicle Odometer Reading',
+            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
+            'Response': ECU_R_ADDR_E + ' 06 41 A6 00 00 0A 07 \r'
+        },
         # Supported PIDs for protocols
-        'ELM_PIDS_A': {
+        'ELM_PIDS_00': {
             'Request': '^0100' + ELM_MAX_RESP,
-            'Descr': 'PIDS_A',
+            'Descr': 'PIDS_00',
             # 'ResponseHeader': \
             # lambda self, cmd, pid, val: \
             # 'SEARCHING...\0 time.sleep(3) \0\r' if self.counters[pid] == 1 else "",
@@ -414,39 +420,60 @@ ObdMessage = {
                 ECU_R_ADDR_H + ' 06 41 00 98 3A 80 13 \r' +
                 ECU_R_ADDR_E + ' 06 41 00 BE 3F A8 13 \r'
         },
-        'ELM_PIDS_B': {
+        # 'ELM_PIDS_00': {
+        #     'Request': '^0100' + ELM_MAX_RESP,
+        #     'Descr': 'PIDS_00',
+        #     # 'ResponseHeader': \
+        #     # lambda self, cmd, pid, val: \
+        #     # 'SEARCHING...\0 time.sleep(3) \0\r' if self.counters[pid] == 1 else "",
+        #     'Response':
+        #         'ERR94\r'
+        # },
+        'ELM_PIDS_20': {
             'Request': '^0120' + ELM_MAX_RESP,
-            'Descr': 'PIDS_B',
+            'Descr': 'PIDS_20',
             'Response':
                 ECU_R_ADDR_H + ' 06 41 20 80 01 A0 00 \r' +
                 ECU_R_ADDR_E + ' 06 41 20 90 15 B0 15 \r'
         },
-        # 'ELM_PIDS_B': {
+        # 'ELM_PIDS_20': {
         #     'Request': '^0120' + ELM_MAX_RESP,
-        #     'Descr': 'PIDS_B',
+        #     'Descr': 'PIDS_20',
         #     'Response':
         #     ECU_R_ADDR_H + ' 06 41 20 80 01 80 01 \r' +
         #     ECU_R_ADDR_E + ' 06 41 20 A0 19 90 15 \r'
         # },
-        'ELM_PIDS_C': {
+        'ELM_PIDS_40': {
             'Request': '^0140' + ELM_MAX_RESP,
-            'Descr': 'PIDS_C',
+            'Descr': 'PIDS_40',
             'Response':
-                ECU_R_ADDR_E + ' 06 41 40 7A 1C 80 00 \r'
+                ECU_R_ADDR_E + ' 06 41 40 7A 1C 80 01 \r'
         },
-        # 'ELM_PIDS_C': {
+        # 'ELM_PIDS_40': {
         #     'Request': '^0140' + ELM_MAX_RESP,
-        #     'Descr': 'PIDS_C',
+        #     'Descr': 'PIDS_40',
         #     'Response':
         #     ECU_R_ADDR_H + ' 06 41 40 C0 00 00 01 \r' +
         #     ECU_R_ADDR_E + ' 06 41 40 CC D0 00 09 \r'
         # },
-        # 'ELM_PIDS_D': {
-        #     'Request': '^0160' + ELM_MAX_RESP,
-        #     'Descr': 'PIDS_D',
-        #     'Response':
-        #     ECU_R_ADDR_E + ' 06 41 60 02 09 02 40 \r'
-        # },
+        'ELM_PIDS_60': {
+            'Request': '^0160' + ELM_MAX_RESP,
+            'Descr': 'PIDS_60',
+            'Response':
+            ECU_R_ADDR_E + ' 06 41 60 02 09 02 41 \r'
+        },
+        'ELM_PIDS_80': {
+            'Request': '^0180' + ELM_MAX_RESP,
+            'Descr': 'PIDS_80',
+            'Response':
+            ECU_R_ADDR_E + ' 06 41 80 29 32 40 29 \r'
+        },
+        'ELM_PIDS_A0': {
+            'Request': '^01A0' + ELM_MAX_RESP,
+            'Descr': 'PIDS_A0',
+            'Response':
+            ECU_R_ADDR_E + ' 06 41 A0 44 00 00 00 \r'
+        },
         'CONFIRMED_DTC': {
             'Request': '^03' + ELM_MAX_RESP,
             'Descr': 'Confirmed DTC',
@@ -454,6 +481,12 @@ ObdMessage = {
                 ECU_R_ADDR_H + ' 02 43 00 \r' +
                 ECU_R_ADDR_E + ' 02 43 00 \r'
         },
+        # 'CONFIRMED_DTC': {
+        #     'Request': '^03' + ELM_MAX_RESP,
+        #     'Descr': 'Confirmed DTC',
+        #     'Response':
+        #         'ERR94\r'
+        # },
         'PENDING_DTC': {
             'Request': '^07' + ELM_MAX_RESP,
             'Descr': 'Pending DTC',
@@ -486,40 +519,40 @@ ObdMessage = {
         #     'Response':
         #     ECU_R_ADDR_H + ' 03 7F 08 11 \r'
         # },
-        'ELM_MIDS_A': {
+        'ELM_MIDS_00': {
             'Request': '^0600' + ELM_MAX_RESP,
-            'Descr': 'MIDS_A',
+            'Descr': 'MIDS_00',
             'Response': ECU_R_ADDR_E + ' 06 46 00 C0 00 00 01 \r'
         },
-        'ELM_MIDS_B': {
+        'ELM_MIDS_20': {
             'Request': '^0620' + ELM_MAX_RESP,
-            'Descr': 'MIDS_B',
+            'Descr': 'MIDS_20',
             'Response': ECU_R_ADDR_E + ' 06 46 20 80 00 80 01 \r'
         },
-        'ELM_MIDS_C': {
+        'ELM_MIDS_40': {
             'Request': '^0640' + ELM_MAX_RESP,
-            'Descr': 'MIDS_C',
+            'Descr': 'MIDS_40',
             'Response': ECU_R_ADDR_E + ' 06 46 40 00 00 00 01 \r'
         },
-        'ELM_MIDS_D': {
+        'ELM_MIDS_60': {
             'Request': '^0660' + ELM_MAX_RESP,
-            'Descr': 'MIDS_D',
+            'Descr': 'MIDS_60',
             'Response': ECU_R_ADDR_E + ' 06 46 60 00 00 00 01 \r'
         },
-        'ELM_MIDS_E': {
+        'ELM_MIDS_80': {
             'Request': '^0680' + ELM_MAX_RESP,
-            'Descr': 'MIDS_E',
+            'Descr': 'MIDS_80',
             'Response': ECU_R_ADDR_E + ' 06 46 80 00 00 00 01 \r'
         },
-        'ELM_MIDS_F': {
+        'ELM_MIDS_A0': {
             'Request': '^06A0' + ELM_MAX_RESP,
-            'Descr': 'MIDS_F',
+            'Descr': 'MIDS_A0',
             'Response': ECU_R_ADDR_E + ' 06 46 A0 F8 00 00 00 \r'
         },
-        'ELM_PIDS_9A': {
+        'ELM_PIDS_0900': {
             'Request': '^0900' + ELM_MAX_RESP,
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
-            'Descr': 'PIDS_9A',
+            'Descr': 'PIDS_0900',
             'Response':
                 ECU_R_ADDR_H + ' 06 49 00 14 00 00 00 \r' +
                 ECU_R_ADDR_E + ' 06 49 00 FF DF 00 00 \r'
@@ -724,17 +757,17 @@ ObdMessage = {
         }
     },
     'ISO14230': {
-        'ELM_PIDS_A': {
+        'ELM_PIDS_00': {
             'Request': '^0100' + ELM_MAX_RESP,
             'Descr': 'Support PID 01~20',
             'Response': '86 F1 11 41 00 BE 3E B8 11 8E \r'
         },
-        'ELM_PIDS_B': {
+        'ELM_PIDS_20': {
             'Request': '^0120' + ELM_MAX_RESP,
             'Descr': 'Support PID 21~40',
             'Response': '86 F1 11 41 20 BE 3E B8 11 AE \r'
         },
-        'ELM_PIDS_C': {
+        'ELM_PIDS_40': {
             'Request': '^0140' + ELM_MAX_RESP,
             'Descr': 'Support PID 41~60',
             'Response': '86 F1 11 41 40 00 00 00 00 09 \r'
@@ -774,7 +807,7 @@ ObdMessage = {
             'Descr': 'Permanent DTC',
             'Response': '83 F1 11 7F 0A 11 1F \r'
         },
-        'ELM_PIDS_9A': {
+        'ELM_PIDS_0900': {
             'Request': '^0900' + ELM_MAX_RESP,
             'Descr': 'Support ITID 01~20',
             'Response': '87 F1 11 49 00 01 FF 00 00 00 D2 \r'
@@ -810,18 +843,30 @@ ObdMessage = {
         }
     },
     'ISO27145': {
-        'ELM_PIDS_A': {
+        'ELM_PIDS_00': {
             'Request': '^22F400' + ELM_MAX_RESP,
             'Descr': 'Support PID 01~20',
-            'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
             'Response': ECU_R_ADDR_E + ' 07 62 F4 00 BE 3F A8 13 \r'
         },
-        'ELM_PIDS_B': {
+        # 'ELM_PIDS_00': {
+        #     'Request': '^22F400' + ELM_MAX_RESP,
+        #     'Descr': 'Support PID 01~20',
+        #     'Response':
+        #         ECU_R_ADDR_E + ' 07 62 F4 00 BE 3F A8 13 \r' +
+        #         '18 FE F1 21 04 00 00 00 00 \r' +
+        #         '18 FE F1 21 04 00 00 00 00 \r' +
+        #         '18 FE F1 21 04 00 00 00 00 \r' +
+        #         '18 FE F1 21 04 00 00 00 00 \r' +
+        #         '18 FE F1 21 04 00 00 00 00 \r' +
+        #         '18 FE F1 21 04 00 00 00 00 \r' +
+        #         'STOPPED \r'
+        # },
+        'ELM_PIDS_20': {
             'Request': '^22F420' + ELM_MAX_RESP,
             'Descr': 'Support PID 21~40',
             'Response': ECU_R_ADDR_E + ' 07 62 F4 20 90 15 B0 15 \r'
         },
-        'ELM_PIDS_C': {
+        'ELM_PIDS_40': {
             'Request': '^22F440' + ELM_MAX_RESP,
             'Descr': 'Support PID 41~60',
             'Response': ECU_R_ADDR_E + ' 07 62 F4 40 7A 1C 80 00 \r'
@@ -836,7 +881,7 @@ ObdMessage = {
             'Request': '^22F41C' + ELM_MAX_RESP,
             'Descr': 'OBD Standards Compliance',
             'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
-            'Response': ECU_R_ADDR_E + ' 04 22 F4 1C 06 \r'
+            'Response': ECU_R_ADDR_E + ' 04 62 F4 1C 06 \r'
         },
         'F421': {
             'Request': '^22F421' + ELM_MAX_RESP,
@@ -859,6 +904,29 @@ ObdMessage = {
                 ECU_R_ADDR_E + ' 21 43 4C 44 44 42 35 4B \r' +
                 ECU_R_ADDR_E + ' 22 54 56 31 36 33 34 37 \r'
         },
+        # 'F802': {
+        #     'Request': '^22F802' + ELM_MAX_RESP,
+        #     'Descr': 'Get Vehicle Identification Number',
+        #     'Header': [ECU_ADDR_FUNC_68, ECU_ADDR_E],
+        #     'Response':
+        #         ECU_R_ADDR_E + ' 10 14 62 F8 02 4C 45 46 \r' +
+        #         ECU_R_ADDR_E + ' 21 43 4D 43 48 44 39 4C \r' +
+        #         ECU_R_ADDR_E + ' 22 54 30 36 30 33 33 39 \r' +
+        #         ECU_R_ADDR_E + ' 10 14 62 F8 02 4C 45 46 \r' +
+        #         ECU_R_ADDR_E + ' 21 43 4D 43 48 44 39 4C \r' +
+        #         ECU_R_ADDR_E + ' 22 54 30 36 30 33 33 39 \r' +
+        #         ECU_R_ADDR_E + ' 10 13 62 F8 04 4A 58 34 \r' +
+        #         ECU_R_ADDR_E + ' 21 39 33 5A 4C 51 36 2F \r' +
+        #         ECU_R_ADDR_E + ' 22 38 35 4B 57 00 00 AA \r' +
+        #         ECU_R_ADDR_E + ' 07 62 F8 06 94 7F 58 8D \r' +
+        #         ECU_R_ADDR_E + ' 10 27 62 F8 0B 00 00 00 \r' +
+        #         ECU_R_ADDR_E + ' 21 07 00 00 00 00 00 00 \r' +
+        #         ECU_R_ADDR_E + ' 22 00 00 00 00 00 00 00 \r' +
+        #         ECU_R_ADDR_E + ' 23 00 00 00 00 00 00 00 \r' +
+        #         ECU_R_ADDR_E + ' 24 00 00 00 00 00 00 00 \r' +
+        #         ECU_R_ADDR_E + ' 25 00 00 00 00 00 AA AA \r' +
+        #         'STOPPED \r'
+        # },
         'F804': {
             'Request': '^22F804' + ELM_MAX_RESP,
             'Descr': 'Get Calibration ID',
@@ -1004,13 +1072,32 @@ ObdMessage = {
             'Request': '^00D300' + ELM_MAX_RESP,
             'Descr': 'Get Calibration Information',
             'Response':
-                '028 \r\0 time.sleep(0.6) \0' +
-                '7 0EBFF 00 01 FF 12 75 15 4B 43 31 \r' +
-                '7 0EBFF 00 02 30 30 31 36 2E 30 30 \r' +
-                '7 0EBFF 00 03 00 00 00 00 00 00 8C \r' +
-                '7 0EBFF 00 04 4B F9 C9 4E 4F 78 2D \r' +
-                '7 0EBFF 00 05 53 41 45 31 34 61 20 \r' +
-                '7 0EBFF 00 06 41 54 4F 31 00 FF FF \r'
+                '014 \r\0 time.sleep(0.6) \0' +
+                '7 0EBFF 00 01 39 D6 7E 88 53 43 39 \r' +
+                '7 0EBFF 00 02 34 39 34 30 00 00 00 \r' +
+                '7 0EBFF 00 03 00 00 00 00 00 00 FF \r'
         },
+        # 'DM19': {
+        #     'Request': '^00D300' + ELM_MAX_RESP,
+        #     'Descr': 'Get Calibration Information',
+        #     'Response':
+        #         '014 \r\0 time.sleep(0.6) \0' +
+        #         '7 0EBFF 00 01 39 D6 7E 88 53 43 39 \r' +
+        #         '7 0EBFF 00 02 34 39 34 30 00 00 00 \r' +
+        #         '7 0EBFF 00 03 00 00 00 00 00 00 FF \r' +
+        #         'STOPPED \r'
+        # },
+        # 'DM19': {
+        #     'Request': '^00D300' + ELM_MAX_RESP,
+        #     'Descr': 'Get Calibration Information',
+        #     'Response':
+        #         '028 \r\0 time.sleep(0.6) \0' +
+        #         '7 0EBFF 00 01 FF 12 75 15 4B 43 31 \r' +
+        #         '7 0EBFF 00 02 30 30 31 36 2E 30 30 \r' +
+        #         '7 0EBFF 00 03 00 00 00 00 00 00 8C \r' +
+        #         '7 0EBFF 00 04 4B F9 C9 4E 4F 78 2D \r' +
+        #         '7 0EBFF 00 05 53 41 45 31 34 61 20 \r' +
+        #         '7 0EBFF 00 06 41 54 4F 31 00 FF FF \r'
+        # },
     }
 }
